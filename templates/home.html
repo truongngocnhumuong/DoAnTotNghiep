@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<section class="hero-panel p-4 p-md-5 mb-4 rounded-3">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <p class="text-uppercase small fw-semibold mb-2 text-brand">Quy trình tuyển dụng</p>
+            <h1 class="display-6 fw-bold mb-3">Hỗ trợ sàng lọc hồ sơ và theo dõi ứng viên</h1>
+            <p class="lead mb-4">
+                Ứng viên xem tin tuyển dụng và nộp CV. Bộ phận nhân sự quản lý tin, chấm mức phù hợp CV–JD,
+                theo dõi trạng thái hồ sơ và xem thống kê tuyển dụng.
+            </p>
+            <a class="btn btn-brand btn-lg" href="{% url 'jobs:job-list' %}">Xem việc làm</a>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-outline-secondary btn-lg ms-2" href="{% url 'login' %}">Đăng nhập</a>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Vai trò trong hệ thống</h2>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-shield-check text-brand me-2"></i>Quản trị: tài khoản và phân quyền</li>
+                        <li class="mb-2"><i class="bi bi-people text-brand me-2"></i>Nhân sự: tin tuyển dụng, Kanban, thống kê</li>
+                        <li><i class="bi bi-person-badge text-brand me-2"></i>Ứng viên: xem việc làm và nộp hồ sơ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }} — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'jobs:job-list' %}">Việc làm</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
+    </ol>
+</nav>
+
+<article class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h3 mb-2">{{ job.title }}</h1>
+        <p class="text-muted">
+            {{ job.department|default:"Chưa phân bộ phận" }}
+            · {{ job.location|default:"Không giới hạn địa điểm" }}
+            · {{ job.get_employment_type_display|default:job.employment_type|default:"Hình thức chưa cập nhật" }}
+        </p>
+        <p><strong>Hạn nộp:</strong> {{ job.deadline|date:"d/m/Y" }}</p>
+
+        <h2 class="h5 mt-4">Mô tả công việc</h2>
+        <p class="preserve-lines">{{ job.description }}</p>
+
+        <h2 class="h5 mt-4">Yêu cầu</h2>
+        <p class="preserve-lines">{{ job.requirements }}</p>
+
+        {% if job.benefits %}
+            <h2 class="h5 mt-4">Quyền lợi</h2>
+            <p class="preserve-lines">{{ job.benefits }}</p>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

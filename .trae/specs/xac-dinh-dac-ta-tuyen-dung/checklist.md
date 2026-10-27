@@ -1,0 +1,34 @@
+- [x] Cấu trúc Django project gồm `config`, `accounts`, `jobs`, `applications`, `dashboard` được tạo đúng như đặc tả
+- [x] `AUTH_USER_MODEL = "accounts.User"` được khai báo trước migration đầu; `User` kế thừa `AbstractUser`
+- [x] Mật khẩu dùng Django Authentication; không tự băm hay tự viết login
+- [x] Cơ sở dữ liệu có đủ 5 bảng chính; ForeignKey đặt tên `created_by`, `job_post`, `candidate`, `application`, `changed_by`
+- [x] `Application` có `scoring_status`; `similarity_score` và `ranking_position` chỉ có khi chấm thành công
+- [x] Unique `(job_post, candidate)` và các `on_delete` đúng theo đặc tả
+- [x] Email bắt buộc, unique sau chuẩn hóa (chữ thường, cắt khoảng trắng); không ngoại lệ tài khoản demo
+- [ ] Đăng ký Candidate hoạt động đúng, dùng `create_user`, không cấp sai vai trò; thông báo rồi chuyển trang đăng nhập, không tự login
+- [ ] Đăng nhập, đăng xuất và phân quyền theo vai trò được kiểm tra phía máy chủ
+- [ ] Giao diện Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; cùng quy tắc email chuẩn hóa/unique và `role` với `/admin/`
+- [ ] Django Admin `/admin/` dùng được khi phát triển, cùng ràng buộc email/`role`; không bắt buộc trong checklist demo nộp
+- [ ] HR tạo, sửa, đóng tin tuyển dụng được
+- [ ] Candidate xem danh sách việc làm và chi tiết JD được
+- [ ] Candidate nộp CV PDF hoặc DOCX hợp lệ, tối đa 5 MB được
+- [ ] Hệ thống chặn tệp sai phần mở rộng, nội dung không phải PDF/DOCX thật, vượt 5 MB, tệp lỗi và nộp trùng; chấp nhận `application/octet-stream` khi đã xác minh nội dung
+- [ ] Nộp hồ sơ tạo lịch sử `APPLIED` với `changed_by` là Candidate
+- [ ] View tải CV yêu cầu đăng nhập và đúng quyền; Candidate không tải CV người khác
+- [ ] Hệ thống trích xuất được văn bản từ CV PDF bằng `pdfminer.six` (không dùng `PyPDF2`)
+- [ ] Hệ thống trích xuất được văn bản từ CV DOCX
+- [ ] Hệ thống tiền xử lý văn bản CV và JD trước khi chấm điểm; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`, không gán điểm 0
+- [ ] Cùng một `JobPost` dùng một corpus TF-IDF (JD + các CV hợp lệ) rồi mới tính Cosine Similarity
+- [ ] Hồ sơ không đọc được hoặc văn bản rỗng không bị gán `similarity_score = 0`
+- [ ] Hệ thống tính lại điểm và thứ hạng khi có CV mới hoặc khi nội dung JD đổi
+- [ ] Hệ thống lưu `cv_text`, `scoring_status`, `similarity_score` và `ranking_position` đúng
+- [ ] HR xem được danh sách ứng viên, điểm phù hợp, thứ hạng và trạng thái chấm lỗi
+- [ ] Kanban dùng 5 trạng thái `APPLIED`, `REVIEWING`, `INTERVIEW`, `OFFERED`, `REJECTED` và chỉ nhận chuyển hợp lệ phía máy chủ
+- [ ] Kéo `REJECTED` sang `INTERVIEW` (hoặc cột khác) bằng thao tác thường bị từ chối
+- [ ] Khôi phục hồ sơ từ chối nhầm là thao tác riêng có xác nhận và có bản ghi lịch sử
+- [ ] Mỗi lần đổi trạng thái đều sinh bản ghi `ApplicationStatusHistory` với đúng user thực hiện
+- [ ] HR thêm và xem ghi chú phỏng vấn được
+- [ ] Candidate chỉ xem được hồ sơ của chính mình khi gọi URL trực tiếp
+- [ ] Dashboard hiển thị đúng các số liệu tổng quan và biểu đồ cơ bản bằng Chart.js; chỉ số tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% có ghi chú ý nghĩa
+- [ ] Hệ thống xử lý đúng các lỗi quyền truy cập, lỗi JD, lỗi tệp CV và lỗi chấm điểm quan trọng
+- [ ] Hệ thống chạy được trên máy tính cá nhân với Python, Django và SQLite

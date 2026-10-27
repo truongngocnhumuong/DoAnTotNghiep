@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Bảng thống kê — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Bảng thống kê tuyển dụng</h1>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Tổng số tin tuyển dụng</p>
+                <p class="display-6 mb-0">{{ total_jobs }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Tin đang mở</p>
+                <p class="display-6 mb-0">{{ open_jobs }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Tổng số hồ sơ</p>
+                <p class="display-6 mb-0">{{ total_applications }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

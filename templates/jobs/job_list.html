@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Việc làm — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Tin tuyển dụng đang mở</h1>
+        <p class="text-muted mb-0">Danh sách vị trí còn nhận hồ sơ.</p>
+    </div>
+</div>
+
+{% if jobs %}
+    <div class="row g-3">
+        {% for job in jobs %}
+            <div class="col-md-6 col-lg-4">
+                <article class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h5 card-title">{{ job.title }}</h2>
+                        <p class="text-muted small mb-2">
+                            {{ job.department|default:"Chưa phân bộ phận" }}
+                            · {{ job.location|default:"Không giới hạn địa điểm" }}
+                        </p>
+                        <p class="small mb-3">Hạn nộp: {{ job.deadline|date:"d/m/Y" }}</p>
+                        <a class="btn btn-outline-primary mt-auto" href="{% url 'jobs:job-detail' job.pk %}">Xem chi tiết</a>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-light border">
+        Hiện chưa có tin tuyển dụng đang mở.
+    </div>
+{% endif %}
+{% endblock %}

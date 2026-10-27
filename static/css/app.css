@@ -1,0 +1,48 @@
+:root {
+    --brand: #0f4c81;
+    --brand-dark: #0b3a63;
+    --brand-soft: #e8f1f8;
+}
+
+body {
+    background: #f5f7fa;
+    color: #1f2933;
+}
+
+.bg-brand {
+    background-color: var(--brand);
+}
+
+.text-brand {
+    color: var(--brand);
+}
+
+.btn-brand {
+    background-color: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+    color: #fff;
+}
+
+.hero-panel {
+    background: linear-gradient(135deg, var(--brand-soft) 0%, #ffffff 70%);
+    border: 1px solid #d9e6f2;
+}
+
+.preserve-lines {
+    white-space: pre-wrap;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #fff;
+}

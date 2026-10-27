@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ sơ ứng tuyển — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Hồ sơ ứng tuyển</h1>
+
+{% if applications %}
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Vị trí</th>
+                    <th>Ứng viên</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày nộp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.job_post.title }}</td>
+                        <td>{{ application.candidate.full_name }}</td>
+                        <td>{{ application.get_current_status_display }}</td>
+                        <td>{{ application.applied_at|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-light border">Chưa có hồ sơ ứng tuyển để hiển thị.</div>
+{% endif %}
+{% endblock %}

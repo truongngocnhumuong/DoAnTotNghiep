@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-brand">
+    <div class="container">
+        <a class="navbar-brand fw-semibold" href="{% url 'jobs:home' %}">
+            <i class="bi bi-briefcase-fill me-1"></i>Tuyển dụng
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Mở menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jobs:home' %}">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jobs:job-list' %}">Việc làm</a>
+                </li>
+                {% if user.is_authenticated %}
+                    {% if user.role == user.Role.CANDIDATE %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'applications:application-list' %}">Hồ sơ của tôi</a>
+                        </li>
+                    {% endif %}
+                    {% if user.role == user.Role.HR or user.role == user.Role.ADMIN %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:index' %}">Bảng thống kê</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'applications:application-list' %}">Hồ sơ ứng tuyển</a>
+                        </li>
+                    {% endif %}
+                    {% if user.role == user.Role.ADMIN %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}">Quản trị</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>{{ user.full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><span class="dropdown-item-text small text-muted">Đã đăng nhập</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Đăng nhập</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
