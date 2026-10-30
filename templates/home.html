@@ -14,7 +14,8 @@
             </p>
             <a class="btn btn-brand btn-lg" href="{% url 'jobs:job-list' %}">Xem việc làm</a>
             {% if not user.is_authenticated %}
-                <a class="btn btn-outline-secondary btn-lg ms-2" href="{% url 'login' %}">Đăng nhập</a>
+                <a class="btn btn-outline-secondary btn-lg ms-2" href="{% url 'accounts:login' %}">Đăng nhập</a>
+                <a class="btn btn-outline-secondary btn-lg ms-2" href="{% url 'accounts:register' %}">Đăng ký</a>
             {% endif %}
         </div>
         <div class="col-lg-4">

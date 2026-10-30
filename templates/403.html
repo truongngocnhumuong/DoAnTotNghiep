@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Không có quyền truy cập — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger">
+    <h1 class="h4">Không có quyền truy cập</h1>
+    <p class="mb-0">{{ exception|default:"Bạn không có quyền truy cập chức năng này." }}</p>
+</div>
+<a class="btn btn-outline-secondary" href="{% url 'jobs:home' %}">Về trang chủ</a>
+{% endblock %}

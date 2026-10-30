@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Sửa tài khoản{% else %}Tạo tài khoản{% endif %} — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">{% if object %}Sửa tài khoản{% else %}Tạo tài khoản{% endif %}</h1>
+<form method="post" novalidate class="card shadow-sm">
+    {% csrf_token %}
+    <div class="card-body">
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% for field in form %}
+            {% if field.name == "is_active" or field.name == "is_staff" %}
+                <div class="form-check mb-3">
+                    {{ field }}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors.0 }}</div>{% endif %}
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                    {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors.0 }}</div>{% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-brand">Lưu</button>
+        <a class="btn btn-outline-secondary" href="{% url 'accounts:user-list' %}">Hủy</a>
+    </div>
+</form>
+{% endblock %}

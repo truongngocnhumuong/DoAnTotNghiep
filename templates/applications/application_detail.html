@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ sơ {{ application.job_post.title }} — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'applications:application-list' %}">Hồ sơ ứng tuyển</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ application.job_post.title }}</li>
+    </ol>
+</nav>
+
+<article class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h4 mb-3">{{ application.job_post.title }}</h1>
+        <p><strong>Ứng viên:</strong> {{ application.candidate.full_name }}</p>
+        <p><strong>Trạng thái hồ sơ:</strong> {{ application.get_current_status_display }}</p>
+        <p><strong>Trạng thái chấm điểm:</strong> {{ application.get_scoring_status_display }}</p>
+        {% if application.scoring_status == "SCORED" %}
+            <p><strong>Điểm phù hợp:</strong> {{ application.similarity_score }}</p>
+            <p><strong>Thứ hạng:</strong> {{ application.ranking_position }}</p>
+        {% else %}
+            <p class="text-muted">Hồ sơ chưa có điểm chấm thành công.</p>
+        {% endif %}
+        <p><strong>Ngày nộp:</strong> {{ application.applied_at|date:"d/m/Y H:i" }}</p>
+        <p><strong>Tệp CV:</strong> {{ application.cv_original_name }}</p>
+    </div>
+</article>
+{% endblock %}

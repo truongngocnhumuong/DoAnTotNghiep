@@ -134,8 +134,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "accounts.User"
 
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "jobs:home"
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "jobs:job-list"
 LOGOUT_REDIRECT_URL = "jobs:home"
 
 MESSAGE_TAGS = {

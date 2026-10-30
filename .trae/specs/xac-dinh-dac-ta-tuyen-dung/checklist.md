@@ -5,10 +5,10 @@
 - [x] `Application` có `scoring_status`; `similarity_score` và `ranking_position` chỉ có khi chấm thành công
 - [x] Unique `(job_post, candidate)` và các `on_delete` đúng theo đặc tả
 - [x] Email bắt buộc, unique sau chuẩn hóa (chữ thường, cắt khoảng trắng); không ngoại lệ tài khoản demo
-- [ ] Đăng ký Candidate hoạt động đúng, dùng `create_user`, không cấp sai vai trò; thông báo rồi chuyển trang đăng nhập, không tự login
-- [ ] Đăng nhập, đăng xuất và phân quyền theo vai trò được kiểm tra phía máy chủ
-- [ ] Giao diện Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; cùng quy tắc email chuẩn hóa/unique và `role` với `/admin/`
-- [ ] Django Admin `/admin/` dùng được khi phát triển, cùng ràng buộc email/`role`; không bắt buộc trong checklist demo nộp
+- [x] Đăng ký Candidate hoạt động đúng, dùng `create_user`, không cấp sai vai trò; thông báo rồi chuyển trang đăng nhập, không tự login
+- [x] Đăng nhập, đăng xuất và phân quyền theo vai trò được kiểm tra phía máy chủ
+- [x] Giao diện Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; cùng quy tắc email chuẩn hóa/unique và `role` với `/admin/`
+- [x] Django Admin `/admin/` dùng được khi phát triển, cùng ràng buộc email/`role`; không bắt buộc trong checklist demo nộp
 - [ ] HR tạo, sửa, đóng tin tuyển dụng được
 - [ ] Candidate xem danh sách việc làm và chi tiết JD được
 - [ ] Candidate nộp CV PDF hoặc DOCX hợp lệ, tối đa 5 MB được

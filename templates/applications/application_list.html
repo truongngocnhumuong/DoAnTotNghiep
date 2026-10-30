@@ -14,6 +14,7 @@
                     <th>Ứng viên</th>
                     <th>Trạng thái</th>
                     <th>Ngày nộp</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +24,7 @@
                         <td>{{ application.candidate.full_name }}</td>
                         <td>{{ application.get_current_status_display }}</td>
                         <td>{{ application.applied_at|date:"d/m/Y H:i" }}</td>
+                        <td><a href="{% url 'applications:application-detail' application.pk %}">Chi tiết</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

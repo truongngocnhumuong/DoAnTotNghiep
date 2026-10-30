@@ -5,6 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, models
 from django.db.models.deletion import ProtectedError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import User
@@ -165,3 +166,71 @@ class ApplicationModelTests(TestCase):
             ApplicationStatusHistory._meta.get_field("changed_by").remote_field.on_delete,
             models.PROTECT,
         )
+
+
+class ApplicationObjectPermissionTests(TestCase):
+    def setUp(self):
+        self.hr = User.objects.create_user(
+            username="hrobj",
+            email="hrobj@mail.com",
+            password="MatKhauManh123",
+            full_name="HR Obj",
+            role=User.Role.HR,
+        )
+        self.candidate = User.objects.create_user(
+            username="uvobj",
+            email="uvobj@mail.com",
+            password="MatKhauManh123",
+            full_name="UV Obj",
+            role=User.Role.CANDIDATE,
+        )
+        self.other = User.objects.create_user(
+            username="uvkhac",
+            email="uvkhac@mail.com",
+            password="MatKhauManh123",
+            full_name="UV Khac",
+            role=User.Role.CANDIDATE,
+        )
+        job = JobPost.objects.create(
+            title="Ky su",
+            description="Mo ta",
+            requirements="Yeu cau",
+            deadline=timezone.localdate() + timedelta(days=5),
+            status=JobPost.Status.OPEN,
+            created_by=self.hr,
+        )
+        self.application = Application.objects.create(
+            job_post=job,
+            candidate=self.candidate,
+            cv_file=SimpleUploadedFile("cv.pdf", b"%PDF-1.4 x", content_type="application/pdf"),
+            cv_original_name="cv.pdf",
+        )
+
+    def test_candidate_cannot_view_another_application(self):
+        self.client.login(username="uvkhac", password="MatKhauManh123")
+        url = reverse("applications:application-detail", args=[self.application.pk])
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_owner_and_hr_can_view_application(self):
+        url = reverse("applications:application-detail", args=[self.application.pk])
+        self.client.login(username="uvobj", password="MatKhauManh123")
+        self.assertEqual(self.client.get(url).status_code, 200)
+        self.client.logout()
+        self.client.login(username="hrobj", password="MatKhauManh123")
+        self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_candidate_list_only_contains_own_applications(self):
+        self.client.login(username="uvkhac", password="MatKhauManh123")
+        response = self.client.get(reverse("applications:application-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Ky su")
+        self.client.logout()
+        self.client.login(username="uvobj", password="MatKhauManh123")
+        own_list = self.client.get(reverse("applications:application-list"))
+        self.assertContains(own_list, "Ky su")
+
+    def test_anonymous_user_cannot_open_application(self):
+        url = reverse("applications:application-detail", args=[self.application.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("accounts:login"), response.url)

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ account.full_name }} — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'accounts:user-list' %}">Người dùng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ account.username }}</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h4 mb-3">{{ account.full_name }}</h1>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tên đăng nhập</dt>
+            <dd class="col-sm-9">{{ account.username }}</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">{{ account.email }}</dd>
+            <dt class="col-sm-3">Vai trò</dt>
+            <dd class="col-sm-9">{{ account.get_role_display }}</dd>
+            <dt class="col-sm-3">Số điện thoại</dt>
+            <dd class="col-sm-9">{{ account.phone|default:"Chưa cập nhật" }}</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">{% if account.is_active %}Hoạt động{% else %}Đã khóa{% endif %}</dd>
+            <dt class="col-sm-3">Ngày tham gia</dt>
+            <dd class="col-sm-9">{{ account.date_joined|date:"d/m/Y H:i" }}</dd>
+            <dt class="col-sm-3">Đăng nhập gần nhất</dt>
+            <dd class="col-sm-9">{{ account.last_login|date:"d/m/Y H:i"|default:"Chưa đăng nhập" }}</dd>
+        </dl>
+        <a class="btn btn-brand mt-3" href="{% url 'accounts:user-update' account.pk %}">Chỉnh sửa</a>
+    </div>
+</div>
+{% endblock %}

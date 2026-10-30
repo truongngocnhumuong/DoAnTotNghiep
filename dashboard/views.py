@@ -1,10 +1,11 @@
 from django.views.generic import TemplateView
 
+from accounts.mixins import StaffRequiredMixin
 from applications.models import Application
 from jobs.models import JobPost
 
 
-class DashboardView(TemplateView):
+class DashboardView(StaffRequiredMixin, TemplateView):
     template_name = "dashboard/index.html"
 
     def get_context_data(self, **kwargs):
@@ -17,5 +18,3 @@ class DashboardView(TemplateView):
             for status, _ in Application.Status.choices
         }
         return context
-
-# Create your views here.
