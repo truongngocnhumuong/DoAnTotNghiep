@@ -11,21 +11,24 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'jobs:home' %}">Trang chủ</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'jobs:job-list' %}">Việc làm</a>
-                </li>
                 {% if user.is_authenticated %}
                     {% if user.role == user.Role.CANDIDATE %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'jobs:job-list' %}">Việc làm</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'applications:application-list' %}">Hồ sơ của tôi</a>
                         </li>
                     {% endif %}
                     {% if user.role == user.Role.HR or user.role == user.Role.ADMIN %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard:index' %}">Bảng thống kê</a>
+                            <a class="nav-link" href="{% url 'jobs:hr-job-list' %}">Tin tuyển dụng</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'applications:application-list' %}">Hồ sơ ứng tuyển</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:index' %}">Bảng thống kê</a>
                         </li>
                     {% endif %}
                     {% if user.role == user.Role.ADMIN %}
@@ -33,6 +36,10 @@
                             <a class="nav-link" href="{% url 'accounts:user-list' %}">Quản lý người dùng</a>
                         </li>
                     {% endif %}
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'jobs:job-list' %}">Việc làm</a>
+                    </li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto">

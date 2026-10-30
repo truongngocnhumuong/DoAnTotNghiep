@@ -13,15 +13,15 @@
   - [x] SubTask 2.5: Xây dựng model `InterviewNote` với ForeignKey `created_by`
   - [x] SubTask 2.6: Tạo migration đầu tiên sau khi đã có `AUTH_USER_MODEL`; kiểm tra quan hệ, `on_delete`, ràng buộc dữ liệu
 
-- [ ] Task 3: Xây dựng xác thực và phân quyền theo vai trò.
-  - [ ] SubTask 3.1: Tạo luồng đăng ký Candidate bằng `create_user`; chuẩn hóa và unique email; thông báo thành công rồi chuyển trang đăng nhập; không tự login; không cho tự chọn `ADMIN`/`HR`
-  - [ ] SubTask 3.2: Tạo đăng nhập, đăng xuất bằng Django Authentication
-  - [ ] SubTask 3.3: Tạo decorator hoặc mixin kiểm tra vai trò `ADMIN`, `HR`, `CANDIDATE` phía máy chủ
-  - [ ] SubTask 3.4: Xây dựng màn hình Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; đăng ký Django Admin `/admin/` cho phát triển, cùng ràng buộc email/`role`
-  - [ ] SubTask 3.5: Kiểm tra object-level: Candidate chỉ thao tác hồ sơ của mình
+- [x] Task 3: Xây dựng xác thực và phân quyền theo vai trò.
+  - [x] SubTask 3.1: Tạo luồng đăng ký Candidate bằng `create_user`; chuẩn hóa và unique email; thông báo thành công rồi chuyển trang đăng nhập; không tự login; không cho tự chọn `ADMIN`/`HR`
+  - [x] SubTask 3.2: Tạo đăng nhập, đăng xuất bằng Django Authentication
+  - [x] SubTask 3.3: Tạo decorator hoặc mixin kiểm tra vai trò `ADMIN`, `HR`, `CANDIDATE` phía máy chủ
+  - [x] SubTask 3.4: Xây dựng màn hình Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; đăng ký Django Admin `/admin/` cho phát triển, cùng ràng buộc email/`role`
+  - [x] SubTask 3.5: Kiểm tra object-level: Candidate chỉ thao tác hồ sơ của mình
 
 - [ ] Task 4: Xây dựng chức năng quản lý tin tuyển dụng.
-  - [ ] SubTask 4.1: Tạo danh sách, tạo mới, chỉnh sửa và đóng tin tuyển dụng cho HR
+  - [x] SubTask 4.1: Tạo danh sách, tạo mới, chỉnh sửa và đóng tin tuyển dụng cho HR
   - [ ] SubTask 4.2: Tạo trang danh sách và chi tiết tin tuyển dụng cho Candidate
   - [ ] SubTask 4.3: Kiểm tra điều kiện tin mở tuyển và hạn nộp
   - [ ] SubTask 4.4: Khi `title`/`description`/`requirements` đổi, gọi tính lại điểm và thứ hạng của tin đó

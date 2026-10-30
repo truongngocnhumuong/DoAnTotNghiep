@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }} — Quản lý tuyển dụng{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'jobs:hr-job-list' %}">Quản lý tin tuyển dụng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
+    </ol>
+</nav>
+
+{# Tiêu đề + hành động #}
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ job.title }}</h1>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            {% if job.status == "OPEN" %}
+                <span class="badge bg-success fs-6">Đang mở</span>
+            {% elif job.status == "CLOSED" %}
+                <span class="badge bg-secondary fs-6">Đã đóng</span>
+            {% else %}
+                <span class="badge bg-light text-dark border fs-6">Nháp</span>
+            {% endif %}
+            <span class="text-muted small">
+                Hạn nộp: <strong>{{ job.deadline|date:"d/m/Y" }}</strong>
+                {% if not job.is_open_for_applications and job.status == "OPEN" %}
+                    <span class="badge bg-warning text-dark ms-1">Đã hết hạn</span>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'jobs:hr-job-update' job.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i>Chỉnh sửa
+        </a>
+        {# Nút đóng tin nhanh #}
+        {% if job.status == "OPEN" %}
+            <form method="post" action="{% url 'jobs:hr-job-update' job.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="{{ job.title }}">
+                <input type="hidden" name="department" value="{{ job.department }}">
+                <input type="hidden" name="location" value="{{ job.location }}">
+                <input type="hidden" name="employment_type" value="{{ job.employment_type }}">
+                <input type="hidden" name="description" value="{{ job.description }}">
+                <input type="hidden" name="requirements" value="{{ job.requirements }}">
+                <input type="hidden" name="benefits" value="{{ job.benefits }}">
+                <input type="hidden" name="deadline" value="{{ job.deadline|date:'Y-m-d' }}">
+                <input type="hidden" name="status" value="CLOSED">
+                <button type="submit" class="btn btn-outline-danger"
+                        onclick="return confirm('Đóng tin này? Ứng viên sẽ không thể nộp hồ sơ mới.')">
+                    <i class="bi bi-x-circle me-1"></i>Đóng tin
+                </button>
+            </form>
+        {% elif job.status == "CLOSED" or job.status == "DRAFT" %}
+            <form method="post" action="{% url 'jobs:hr-job-update' job.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="{{ job.title }}">
+                <input type="hidden" name="department" value="{{ job.department }}">
+                <input type="hidden" name="location" value="{{ job.location }}">
+                <input type="hidden" name="employment_type" value="{{ job.employment_type }}">
+                <input type="hidden" name="description" value="{{ job.description }}">
+                <input type="hidden" name="requirements" value="{{ job.requirements }}">
+                <input type="hidden" name="benefits" value="{{ job.benefits }}">
+                <input type="hidden" name="deadline" value="{{ job.deadline|date:'Y-m-d' }}">
+                <input type="hidden" name="status" value="OPEN">
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="bi bi-play-circle me-1"></i>Mở lại tin
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    {# Cột trái: nội dung JD #}
+    <div class="col-lg-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold">Mô tả công việc</div>
+            <div class="card-body">
+                <p class="preserve-lines mb-0">{{ job.description }}</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold">Yêu cầu ứng viên</div>
+            <div class="card-body">
+                <p class="preserve-lines mb-0">{{ job.requirements }}</p>
+            </div>
+        </div>
+
+        {% if job.benefits %}
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Quyền lợi</div>
+            <div class="card-body">
+                <p class="preserve-lines mb-0">{{ job.benefits }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Cột phải: thống kê + danh sách ứng viên #}
+    <div class="col-lg-5">
+        {# Thẻ thông tin tóm tắt #}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold">Thông tin tin tuyển dụng</div>
+            <div class="card-body">
+                <dl class="row small mb-0">
+                    {% if job.department %}
+                        <dt class="col-5">Phòng / Ban</dt>
+                        <dd class="col-7">{{ job.department }}</dd>
+                    {% endif %}
+                    {% if job.location %}
+                        <dt class="col-5">Địa điểm</dt>
+                        <dd class="col-7">{{ job.location }}</dd>
+                    {% endif %}
+                    {% if job.employment_type %}
+                        <dt class="col-5">Hình thức</dt>
+                        <dd class="col-7">{{ job.employment_type }}</dd>
+                    {% endif %}
+                    <dt class="col-5">Hạn nộp</dt>
+                    <dd class="col-7">{{ job.deadline|date:"d/m/Y" }}</dd>
+                    <dt class="col-5">Người tạo</dt>
+                    <dd class="col-7">{{ job.created_by.full_name|default:job.created_by.username }}</dd>
+                    <dt class="col-5">Ngày tạo</dt>
+                    <dd class="col-7">{{ job.created_at|date:"d/m/Y H:i" }}</dd>
+                    <dt class="col-5">Cập nhật</dt>
+                    <dd class="col-7 mb-0">{{ job.updated_at|date:"d/m/Y H:i" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        {# Thống kê hồ sơ theo trạng thái #}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+                <span>Hồ sơ ứng tuyển</span>
+                <span class="badge bg-primary rounded-pill">{{ application_count }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if status_counts %}
+                    <ul class="list-group list-group-flush">
+                        {% for status, count in status_counts.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center small">
+                                {% if status == "APPLIED" %}<span class="badge bg-info text-dark">Đã nộp</span>
+                                {% elif status == "REVIEWING" %}<span class="badge bg-primary">Đang xét</span>
+                                {% elif status == "INTERVIEW" %}<span class="badge bg-warning text-dark">Phỏng vấn</span>
+                                {% elif status == "OFFERED" %}<span class="badge bg-success">Đề nghị nhận việc</span>
+                                {% elif status == "REJECTED" %}<span class="badge bg-danger">Từ chối</span>
+                                {% else %}{{ status }}{% endif %}
+                                <strong>{{ count }}</strong>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted small p-3 mb-0">Chưa có hồ sơ nào.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Bảng danh sách ứng viên #}
+{% if applications %}
+<div class="card shadow-sm mt-2">
+    <div class="card-header fw-semibold">Danh sách ứng viên đã nộp</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Hạng</th>
+                    <th>Ứng viên</th>
+                    <th>Trạng thái hồ sơ</th>
+                    <th>Điểm phù hợp</th>
+                    <th>Chấm điểm</th>
+                    <th>Ngày nộp</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td class="text-center fw-semibold">
+                        {% if app.ranking_position %}
+                            #{{ app.ranking_position }}
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="fw-semibold">{{ app.candidate.full_name }}</div>
+                        <div class="text-muted small">{{ app.candidate.email }}</div>
+                    </td>
+                    <td>
+                        {% if app.current_status == "APPLIED" %}<span class="badge bg-info text-dark">Đã nộp</span>
+                        {% elif app.current_status == "REVIEWING" %}<span class="badge bg-primary">Đang xét</span>
+                        {% elif app.current_status == "INTERVIEW" %}<span class="badge bg-warning text-dark">Phỏng vấn</span>
+                        {% elif app.current_status == "OFFERED" %}<span class="badge bg-success">Đề nghị nhận việc</span>
+                        {% elif app.current_status == "REJECTED" %}<span class="badge bg-danger">Từ chối</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.scoring_status == "SCORED" and app.similarity_score is not None %}
+                            <span class="fw-semibold">{{ app.similarity_score|floatformat:3 }}</span>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.scoring_status == "SCORED" %}
+                            <span class="badge bg-success">Đã chấm</span>
+                        {% elif app.scoring_status == "PENDING" %}
+                            <span class="badge bg-secondary">Chờ chấm</span>
+                        {% elif app.scoring_status == "EXTRACTION_FAILED" %}
+                            <span class="badge bg-danger" title="Không đọc được nội dung tệp">Lỗi trích xuất</span>
+                        {% elif app.scoring_status == "INSUFFICIENT_TEXT" %}
+                            <span class="badge bg-warning text-dark" title="Văn bản quá ngắn">Văn bản không đủ</span>
+                        {% elif app.scoring_status == "SCORING_FAILED" %}
+                            <span class="badge bg-danger" title="Lỗi khi tính điểm">Lỗi chấm điểm</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">{{ app.applied_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'applications:application-detail' app.pk %}"
+                           class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

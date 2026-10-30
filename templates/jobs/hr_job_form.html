@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form_title }} — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'jobs:hr-job-list' %}">Quản lý tin tuyển dụng</a></li>
+        {% if object %}
+            <li class="breadcrumb-item"><a href="{% url 'jobs:hr-job-detail' object.pk %}">{{ object.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa</li>
+        {% else %}
+            <li class="breadcrumb-item active" aria-current="page">Tạo tin mới</li>
+        {% endif %}
+    </ol>
+</nav>
+
+<h1 class="h3 mb-4">{{ form_title }}</h1>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-4">
+        {# Cột chính — thông tin JD #}
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header fw-semibold">Thông tin vị trí</div>
+                <div class="card-body">
+                    {# Tiêu đề #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ form.title.id_for_label }}">
+                            {{ form.title.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# Phòng ban + Địa điểm #}
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.department.id_for_label }}">{{ form.department.label }}</label>
+                            {{ form.department }}
+                            {% if form.department.errors %}
+                                <div class="invalid-feedback d-block">{{ form.department.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+                            {{ form.location }}
+                            {% if form.location.errors %}
+                                <div class="invalid-feedback d-block">{{ form.location.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# Hình thức làm việc #}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.employment_type.id_for_label }}">{{ form.employment_type.label }}</label>
+                        {{ form.employment_type }}
+                        {% if form.employment_type.errors %}
+                            <div class="invalid-feedback d-block">{{ form.employment_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# Mô tả công việc #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ form.description.id_for_label }}">
+                            {{ form.description.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# Yêu cầu ứng viên #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ form.requirements.id_for_label }}">
+                            {{ form.requirements.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.requirements }}
+                        {% if form.requirements.errors %}
+                            <div class="invalid-feedback d-block">{{ form.requirements.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# Quyền lợi #}
+                    <div class="mb-0">
+                        <label class="form-label" for="{{ form.benefits.id_for_label }}">{{ form.benefits.label }}</label>
+                        {{ form.benefits }}
+                        {% if form.benefits.errors %}
+                            <div class="invalid-feedback d-block">{{ form.benefits.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Cột phụ — cài đặt đăng tin #}
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header fw-semibold">Cài đặt đăng tin</div>
+                <div class="card-body">
+                    {# Hạn nộp #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ form.deadline.id_for_label }}">
+                            {{ form.deadline.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.deadline }}
+                        {% if form.deadline.errors %}
+                            <div class="invalid-feedback d-block">{{ form.deadline.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# Trạng thái #}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ form.status.id_for_label }}">
+                            {{ form.status.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.help_text %}
+                            <div class="form-text">{{ form.status.help_text }}</div>
+                        {% endif %}
+                        {% if form.status.errors %}
+                            <div class="invalid-feedback d-block">{{ form.status.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-brand">
+                            <i class="bi bi-check2 me-1"></i>{{ submit_label }}
+                        </button>
+                        {% if object %}
+                            <a href="{% url 'jobs:hr-job-detail' object.pk %}" class="btn btn-outline-secondary">Hủy</a>
+                        {% else %}
+                            <a href="{% url 'jobs:hr-job-list' %}" class="btn btn-outline-secondary">Hủy</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if object %}
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body small text-muted">
+                    <p class="mb-1"><strong>Người tạo:</strong> {{ object.created_by.full_name|default:object.created_by.username }}</p>
+                    <p class="mb-1"><strong>Tạo lúc:</strong> {{ object.created_at|date:"d/m/Y H:i" }}</p>
+                    <p class="mb-0"><strong>Cập nhật:</strong> {{ object.updated_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
