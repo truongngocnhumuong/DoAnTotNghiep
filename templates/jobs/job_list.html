@@ -1,36 +1,152 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Việc làm — Hệ thống tuyển dụng{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h1 class="h3 mb-1">Tin tuyển dụng đang mở</h1>
-        <p class="text-muted mb-0">Danh sách vị trí còn nhận hồ sơ.</p>
+        <p class="text-muted mb-0">
+            Có <strong>{{ total_open }}</strong> vị trí còn nhận hồ sơ.
+        </p>
     </div>
 </div>
 
+{# --- Form tìm kiếm --- #}
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input
+            type="search"
+            name="q"
+            value="{{ q }}"
+            class="form-control"
+            placeholder="Tìm theo tiêu đề, phòng ban, địa điểm…"
+            aria-label="Tìm kiếm tin tuyển dụng"
+        >
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search me-1"></i>Tìm kiếm
+        </button>
+        {% if q %}
+        <a href="{% url 'jobs:job-list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-lg me-1"></i>Xóa bộ lọc
+        </a>
+        {% endif %}
+    </div>
+</form>
+
+{% if q %}
+<p class="text-muted small mb-3">
+    Kết quả tìm kiếm cho "<strong>{{ q }}</strong>" —
+    {{ page_obj.paginator.count }} tin phù hợp.
+</p>
+{% endif %}
+
+{# --- Danh sách tin --- #}
 {% if jobs %}
     <div class="row g-3">
         {% for job in jobs %}
-            <div class="col-md-6 col-lg-4">
-                <article class="card h-100 shadow-sm">
-                    <div class="card-body d-flex flex-column">
-                        <h2 class="h5 card-title">{{ job.title }}</h2>
-                        <p class="text-muted small mb-2">
-                            {{ job.department|default:"Chưa phân bộ phận" }}
-                            · {{ job.location|default:"Không giới hạn địa điểm" }}
-                        </p>
-                        <p class="small mb-3">Hạn nộp: {{ job.deadline|date:"d/m/Y" }}</p>
-                        <a class="btn btn-outline-primary mt-auto" href="{% url 'jobs:job-detail' job.pk %}">Xem chi tiết</a>
+        <div class="col-md-6 col-lg-4">
+            <article class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    {# Tiêu đề #}
+                    <h2 class="h5 card-title mb-1">
+                        <a href="{% url 'jobs:job-detail' job.pk %}" class="text-decoration-none stretched-link text-dark">
+                            {{ job.title }}
+                        </a>
+                    </h2>
+
+                    {# Phòng ban & địa điểm #}
+                    <p class="text-muted small mb-2">
+                        {% if job.department %}
+                            <i class="bi bi-building me-1"></i>{{ job.department }}
+                        {% endif %}
+                        {% if job.department and job.location %} · {% endif %}
+                        {% if job.location %}
+                            <i class="bi bi-geo-alt me-1"></i>{{ job.location }}
+                        {% endif %}
+                    </p>
+
+                    {# Badge hình thức làm việc #}
+                    {% if job.employment_type %}
+                    <div class="mb-2">
+                        <span class="badge bg-info text-dark">
+                            {{ job.get_employment_type_display }}
+                        </span>
                     </div>
-                </article>
-            </div>
+                    {% endif %}
+
+                    {# Hạn nộp & ngày còn lại #}
+                    <p class="small mb-0 mt-auto">
+                        <i class="bi bi-calendar-event me-1"></i>
+                        Hạn nộp: <strong>{{ job.deadline|date:"d/m/Y" }}</strong>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 pt-0">
+                    <a href="{% url 'jobs:job-detail' job.pk %}"
+                       class="btn btn-outline-primary btn-sm w-100">
+                        Xem chi tiết
+                    </a>
+                </div>
+            </article>
+        </div>
         {% endfor %}
     </div>
+
+    {# --- Phân trang --- #}
+    {% if is_paginated %}
+    <nav aria-label="Phân trang tin tuyển dụng" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                    &laquo; Trước
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo; Trước</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}page={{ page_obj.next_page_number }}">
+                    Tiếp &raquo;
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Tiếp &raquo;</span></li>
+            {% endif %}
+        </ul>
+        <p class="text-center text-muted small">
+            Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            ({{ page_obj.paginator.count }} tin)
+        </p>
+    </nav>
+    {% endif %}
+
 {% else %}
-    <div class="alert alert-light border">
-        Hiện chưa có tin tuyển dụng đang mở.
+    <div class="alert alert-light border text-center py-5">
+        <i class="bi bi-inbox display-6 d-block mb-2 text-muted"></i>
+        {% if q %}
+            Không tìm thấy tin tuyển dụng phù hợp với "<strong>{{ q }}</strong>".
+            <div class="mt-2">
+                <a href="{% url 'jobs:job-list' %}" class="btn btn-sm btn-outline-secondary">Xem tất cả</a>
+            </div>
+        {% else %}
+            Hiện chưa có tin tuyển dụng đang mở.
+        {% endif %}
     </div>
 {% endif %}
 {% endblock %}

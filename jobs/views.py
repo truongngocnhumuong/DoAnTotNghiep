@@ -27,14 +27,35 @@ class JobListView(LoginRequiredMixin, ListView):
     model = JobPost
     template_name = "jobs/job_list.html"
     context_object_name = "jobs"
+    paginate_by = 12
 
     def get_queryset(self):
         from django.utils import timezone
-        return (
+        qs = (
             JobPost.objects.filter(status=JobPost.Status.OPEN)
             .filter(deadline__gte=timezone.localdate())
             .order_by("deadline", "-created_at")
         )
+        # Tìm kiếm theo tiêu đề, phòng ban, địa điểm
+        q = self.request.GET.get("q", "").strip()
+        if q:
+            qs = qs.filter(
+                Q(title__icontains=q)
+                | Q(department__icontains=q)
+                | Q(location__icontains=q)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        from django.utils import timezone
+        context = super().get_context_data(**kwargs)
+        context["q"] = self.request.GET.get("q", "").strip()
+        context["total_open"] = (
+            JobPost.objects.filter(status=JobPost.Status.OPEN)
+            .filter(deadline__gte=timezone.localdate())
+            .count()
+        )
+        return context
 
 
 class JobDetailView(LoginRequiredMixin, DetailView):

@@ -20,11 +20,11 @@
   - [x] SubTask 3.4: Xây dựng màn hình Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; đăng ký Django Admin `/admin/` cho phát triển, cùng ràng buộc email/`role`
   - [x] SubTask 3.5: Kiểm tra object-level: Candidate chỉ thao tác hồ sơ của mình
 
-- [ ] Task 4: Xây dựng chức năng quản lý tin tuyển dụng.
+- [x] Task 4: Xây dựng chức năng quản lý tin tuyển dụng.
   - [x] SubTask 4.1: Tạo danh sách, tạo mới, chỉnh sửa và đóng tin tuyển dụng cho HR
-  - [ ] SubTask 4.2: Tạo trang danh sách và chi tiết tin tuyển dụng cho Candidate
-  - [ ] SubTask 4.3: Kiểm tra điều kiện tin mở tuyển và hạn nộp
-  - [ ] SubTask 4.4: Khi `title`/`description`/`requirements` đổi, gọi tính lại điểm và thứ hạng của tin đó
+  - [x] SubTask 4.2: Tạo trang danh sách và chi tiết tin tuyển dụng cho Candidate
+  - [x] SubTask 4.3: Kiểm tra điều kiện tin mở tuyển và hạn nộp
+  - [x] SubTask 4.4: Khi `title`/`description`/`requirements` đổi, gọi tính lại điểm và thứ hạng của tin đó
 
 - [ ] Task 5: Xây dựng chức năng nộp hồ sơ ứng tuyển và quản lý hồ sơ cơ bản.
   - [ ] SubTask 5.1: Tạo form upload CV cho Candidate

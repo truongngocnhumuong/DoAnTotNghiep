@@ -1,5 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views import View
 from django.views.generic import DetailView, ListView
 
 from accounts.mixins import PERMISSION_DENIED_MESSAGE
@@ -28,3 +31,28 @@ class ApplicationDetailView(ApplicationQuerysetMixin, DetailView):
     model = Application
     template_name = "applications/application_detail.html"
     context_object_name = "application"
+
+
+# ---------------------------------------------------------------------------
+# Stub views — sẽ được thay thế đầy đủ ở Task 5
+# ---------------------------------------------------------------------------
+
+class MyApplicationListView(ApplicationQuerysetMixin, ListView):
+    """Danh sách hồ sơ của Candidate đang đăng nhập."""
+    model = Application
+    template_name = "applications/application_list.html"
+    context_object_name = "applications"
+
+
+class ApplyView(LoginRequiredMixin, View):
+    """Nộp hồ sơ — stub placeholder (Task 5 sẽ hoàn thiện)."""
+
+    def get(self, request, job_pk):
+        # Stub: redirect về trang chi tiết job
+        from jobs.models import JobPost
+        job = get_object_or_404(JobPost, pk=job_pk)
+        return redirect("jobs:job-detail", pk=job_pk)
+
+    def post(self, request, job_pk):
+        # Stub: sẽ xử lý upload CV ở Task 5
+        return HttpResponse("Chuc nang dang duoc phat trien.", status=501)

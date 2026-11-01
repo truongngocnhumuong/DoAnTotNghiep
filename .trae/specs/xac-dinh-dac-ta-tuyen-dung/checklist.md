@@ -10,7 +10,7 @@
 - [x] Giao diện Admin đồ án quản lý tài khoản và phân quyền đủ theo đặc tả; cùng quy tắc email chuẩn hóa/unique và `role` với `/admin/`
 - [x] Django Admin `/admin/` dùng được khi phát triển, cùng ràng buộc email/`role`; không bắt buộc trong checklist demo nộp
 - [x] HR tạo, sửa, đóng tin tuyển dụng được
-- [ ] Candidate xem danh sách việc làm và chi tiết JD được
+- [x] Candidate xem danh sách việc làm và chi tiết JD được
 - [ ] Candidate nộp CV PDF hoặc DOCX hợp lệ, tối đa 5 MB được
 - [ ] Hệ thống chặn tệp sai phần mở rộng, nội dung không phải PDF/DOCX thật, vượt 5 MB, tệp lỗi và nộp trùng; chấp nhận `application/octet-stream` khi đã xác minh nội dung
 - [ ] Nộp hồ sơ tạo lịch sử `APPLIED` với `changed_by` là Candidate
