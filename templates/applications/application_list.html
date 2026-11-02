@@ -1,36 +1,138 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Hồ sơ ứng tuyển — Hệ thống tuyển dụng{% endblock %}
+{% block title %}Tất cả hồ sơ ứng tuyển — Hệ thống tuyển dụng{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-3">Hồ sơ ứng tuyển</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Tất cả hồ sơ ứng tuyển</h1>
+        <p class="text-muted mb-0">
+            Tổng cộng <strong>{{ page_obj.paginator.count }}</strong> hồ sơ.
+        </p>
+    </div>
+</div>
 
 {% if applications %}
-    <div class="table-responsive">
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr>
-                    <th>Vị trí</th>
-                    <th>Ứng viên</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày nộp</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for application in applications %}
-                    <tr>
-                        <td>{{ application.job_post.title }}</td>
-                        <td>{{ application.candidate.full_name }}</td>
-                        <td>{{ application.get_current_status_display }}</td>
-                        <td>{{ application.applied_at|date:"d/m/Y H:i" }}</td>
-                        <td><a href="{% url 'applications:application-detail' application.pk %}">Chi tiết</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="table-responsive">
+    <table class="table table-hover align-middle border rounded-2 overflow-hidden">
+        <thead class="table-light">
+            <tr>
+                <th>Vị trí ứng tuyển</th>
+                <th>Ứng viên</th>
+                <th class="text-center">Trạng thái</th>
+                <th class="text-center">Điểm</th>
+                <th class="text-center">Xếp hạng</th>
+                <th>Ngày nộp</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>
+                    <a href="{% url 'applications:application-detail' application.pk %}"
+                       class="text-decoration-none fw-medium">
+                        {{ application.job_post.title }}
+                    </a>
+                </td>
+                <td>
+                    <div class="fw-medium">{{ application.candidate.full_name }}</div>
+                    <div class="text-muted small">{{ application.candidate.email }}</div>
+                </td>
+                <td class="text-center">
+                    {% if application.current_status == "APPLIED" %}
+                        <span class="badge bg-secondary">Đã nộp</span>
+                    {% elif application.current_status == "REVIEWING" %}
+                        <span class="badge bg-info text-dark">Đang xét</span>
+                    {% elif application.current_status == "INTERVIEW" %}
+                        <span class="badge bg-primary">Phỏng vấn</span>
+                    {% elif application.current_status == "OFFERED" %}
+                        <span class="badge bg-success">Đề nghị nhận việc</span>
+                    {% elif application.current_status == "REJECTED" %}
+                        <span class="badge bg-danger">Từ chối</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if application.scoring_status == "SCORED" and application.similarity_score is not None %}
+                        <span class="text-success fw-semibold">
+                            {{ application.similarity_score|floatformat:3 }}
+                        </span>
+                    {% elif application.scoring_status == "PENDING" %}
+                        <span class="text-muted small">Chờ chấm</span>
+                    {% elif application.scoring_status == "EXTRACTION_FAILED" %}
+                        <span class="text-danger small" title="Lỗi trích xuất CV">
+                            <i class="bi bi-exclamation-circle"></i>
+                        </span>
+                    {% elif application.scoring_status == "INSUFFICIENT_TEXT" %}
+                        <span class="text-warning small" title="Nội dung quá ngắn">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </span>
+                    {% elif application.scoring_status == "SCORING_FAILED" %}
+                        <span class="text-danger small" title="Lỗi chấm điểm">
+                            <i class="bi bi-x-circle"></i>
+                        </span>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if application.ranking_position %}
+                        <span class="badge bg-primary">#{{ application.ranking_position }}</span>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td class="text-muted small">{{ application.applied_at|date:"d/m/Y H:i" }}</td>
+                <td class="text-center">
+                    <a href="{% url 'applications:application-detail' application.pk %}"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye me-1"></i>Xem
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Phân trang #}
+{% if is_paginated %}
+<nav aria-label="Phân trang" class="mt-3">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Trước</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo; Trước</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Tiếp &raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Tiếp &raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
 {% else %}
-    <div class="alert alert-light border">Chưa có hồ sơ ứng tuyển để hiển thị.</div>
+<div class="alert alert-light border text-center py-5">
+    <i class="bi bi-inbox display-6 d-block mb-2 text-muted"></i>
+    Chưa có hồ sơ ứng tuyển nào.
+</div>
 {% endif %}
 {% endblock %}

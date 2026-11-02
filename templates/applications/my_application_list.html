@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hồ sơ của tôi — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Hồ sơ ứng tuyển của tôi</h1>
+        <p class="text-muted mb-0">
+            Tổng cộng <strong>{{ page_obj.paginator.count }}</strong> hồ sơ đã nộp.
+        </p>
+    </div>
+    <a href="{% url 'jobs:job-list' %}" class="btn btn-success">
+        <i class="bi bi-search me-1"></i>Tìm việc mới
+    </a>
+</div>
+
+{% if applications %}
+<div class="row g-3">
+    {% for app in applications %}
+    <div class="col-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="row align-items-center g-3">
+
+                    {# Tên vị trí #}
+                    <div class="col-md-5">
+                        <h2 class="h6 mb-1 fw-semibold">
+                            <a href="{% url 'applications:application-detail' app.pk %}"
+                               class="text-decoration-none">
+                                {{ app.job_post.title }}
+                            </a>
+                        </h2>
+                        <p class="text-muted small mb-0">
+                            {% if app.job_post.department %}
+                                <i class="bi bi-building me-1"></i>{{ app.job_post.department }}
+                            {% endif %}
+                            {% if app.job_post.location %}
+                                · <i class="bi bi-geo-alt me-1"></i>{{ app.job_post.location }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    {# Trạng thái hồ sơ #}
+                    <div class="col-md-2 text-md-center">
+                        {% if app.current_status == "APPLIED" %}
+                            <span class="badge bg-secondary">Đã nộp</span>
+                        {% elif app.current_status == "REVIEWING" %}
+                            <span class="badge bg-info text-dark">Đang xét</span>
+                        {% elif app.current_status == "INTERVIEW" %}
+                            <span class="badge bg-primary">Phỏng vấn</span>
+                        {% elif app.current_status == "OFFERED" %}
+                            <span class="badge bg-success">Đề nghị nhận việc</span>
+                        {% elif app.current_status == "REJECTED" %}
+                            <span class="badge bg-danger">Từ chối</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark">{{ app.current_status }}</span>
+                        {% endif %}
+                    </div>
+
+                    {# Chấm điểm #}
+                    <div class="col-md-2 text-md-center">
+                        {% if app.scoring_status == "SCORED" and app.similarity_score is not None %}
+                            <span class="fw-semibold text-success">
+                                {{ app.similarity_score|floatformat:2 }}
+                            </span>
+                            <div class="text-muted small">Điểm phù hợp</div>
+                        {% elif app.scoring_status == "PENDING" %}
+                            <span class="text-muted small">
+                                <i class="bi bi-hourglass-split me-1"></i>Đang chờ chấm
+                            </span>
+                        {% elif app.scoring_status == "EXTRACTION_FAILED" %}
+                            <span class="text-danger small">
+                                <i class="bi bi-exclamation-circle me-1"></i>Lỗi đọc CV
+                            </span>
+                        {% elif app.scoring_status == "INSUFFICIENT_TEXT" %}
+                            <span class="text-warning small">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Nội dung quá ngắn
+                            </span>
+                        {% elif app.scoring_status == "SCORING_FAILED" %}
+                            <span class="text-danger small">
+                                <i class="bi bi-x-circle me-1"></i>Lỗi chấm điểm
+                            </span>
+                        {% else %}
+                            <span class="text-muted small">—</span>
+                        {% endif %}
+                    </div>
+
+                    {# Ngày nộp #}
+                    <div class="col-md-2 text-md-center">
+                        <div class="small text-muted">Ngày nộp</div>
+                        <div class="small fw-medium">{{ app.applied_at|date:"d/m/Y" }}</div>
+                    </div>
+
+                    {# Hành động #}
+                    <div class="col-md-1 text-md-end">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                    type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-label="Tùy chọn">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{% url 'applications:application-detail' app.pk %}">
+                                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{% url 'applications:cv-download' app.pk %}">
+                                        <i class="bi bi-download me-2"></i>Tải CV
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{# ── Phân trang ── #}
+{% if is_paginated %}
+<nav aria-label="Phân trang hồ sơ" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Trước</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo; Trước</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Tiếp &raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Tiếp &raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-inbox display-5 text-muted d-block mb-3"></i>
+    <h5 class="text-muted mb-3">Bạn chưa nộp hồ sơ cho vị trí nào.</h5>
+    <a href="{% url 'jobs:job-list' %}" class="btn btn-success">
+        <i class="bi bi-search me-1"></i>Khám phá việc làm
+    </a>
+</div>
+{% endif %}
+{% endblock %}

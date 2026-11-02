@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nộp hồ sơ ứng tuyển — {{ job.title }}{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'jobs:job-list' %}">Việc làm</a></li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'jobs:job-detail' job.pk %}">{{ job.title }}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Nộp hồ sơ</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        {# ── Tiêu đề ── #}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <h1 class="h4 mb-1">
+                    <i class="bi bi-send me-2 text-success"></i>Nộp hồ sơ ứng tuyển
+                </h1>
+                <p class="text-muted mb-0">
+                    Vị trí: <strong>{{ job.title }}</strong>
+                    {% if job.department %} — {{ job.department }}{% endif %}
+                    {% if job.location %} | {{ job.location }}{% endif %}
+                </p>
+            </div>
+        </div>
+
+        {# ── Kiểm tra tin còn mở không ── #}
+        {% if not job.is_open_for_applications %}
+        <div class="alert alert-warning d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <div>
+                Tin tuyển dụng này đã <strong>đóng hoặc hết hạn</strong>.
+                Không thể nộp hồ sơ.
+            </div>
+        </div>
+        <a href="{% url 'jobs:job-list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách việc làm
+        </a>
+
+        {% else %}
+
+        {# ── Form nộp hồ sơ ── #}
+        <form method="post" enctype="multipart/form-data" novalidate id="apply-form">
+            {% csrf_token %}
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    {# Lỗi toàn form #}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <div><i class="bi bi-x-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {# ── Trường cv_file ── #}
+                    <div class="mb-4">
+                        <label for="{{ form.cv_file.id_for_label }}" class="form-label fw-semibold">
+                            {{ form.cv_file.label }}
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        {# Input upload file #}
+                        <input
+                            type="file"
+                            name="cv_file"
+                            id="{{ form.cv_file.id_for_label }}"
+                            accept=".pdf,.docx"
+                            class="form-control {% if form.cv_file.errors %}is-invalid{% endif %}"
+                            required
+                        >
+
+                        {# Lỗi field #}
+                        {% if form.cv_file.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.cv_file.errors %}
+                                <div><i class="bi bi-x-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {# Hướng dẫn #}
+                        <div class="form-text mt-2">
+                            <i class="bi bi-info-circle me-1 text-primary"></i>
+                            {{ form.cv_file.help_text }}
+                        </div>
+                    </div>
+
+                    {# ── Thông tin tệp được chọn (JS) ── #}
+                    <div id="file-info" class="alert alert-light border d-none mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-file-earmark-text fs-4 text-primary"></i>
+                            <div>
+                                <div class="fw-semibold" id="file-name">—</div>
+                                <div class="text-muted small" id="file-size">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# ── Lưu ý ── #}
+                    <div class="alert alert-info mb-4">
+                        <h6 class="alert-heading mb-2">
+                            <i class="bi bi-lightbulb me-1"></i>Lưu ý khi nộp hồ sơ
+                        </h6>
+                        <ul class="mb-0 small ps-3">
+                            <li>Chỉ chấp nhận tệp <strong>.pdf</strong> hoặc <strong>.docx</strong>.</li>
+                            <li>Dung lượng tối đa <strong>5 MB</strong>.</li>
+                            <li>Mỗi vị trí chỉ được nộp <strong>một lần</strong>.</li>
+                            <li>Hệ thống sẽ tự động chấm điểm phù hợp sau khi nộp.</li>
+                        </ul>
+                    </div>
+
+                    {# ── Nút submit ── #}
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url 'jobs:job-detail' job.pk %}"
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-x me-1"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-success" id="submit-btn">
+                            <i class="bi bi-send me-1"></i>Nộp hồ sơ
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+        {% endif %}{# end is_open_for_applications #}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    "use strict";
+
+    const input   = document.getElementById("id_cv_file");
+    const infoBox = document.getElementById("file-info");
+    const nameEl  = document.getElementById("file-name");
+    const sizeEl  = document.getElementById("file-size");
+    const submitBtn = document.getElementById("submit-btn");
+
+    if (!input) return;
+
+    // Hiển thị thông tin tệp khi chọn
+    input.addEventListener("change", function () {
+        const file = this.files && this.files[0];
+        if (!file) {
+            infoBox.classList.add("d-none");
+            return;
+        }
+        nameEl.textContent = file.name;
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        sizeEl.textContent = sizeMB + " MB";
+        infoBox.classList.remove("d-none");
+
+        // Cảnh báo dung lượng vượt 5 MB ngay trên trình duyệt
+        if (file.size > 5 * 1024 * 1024) {
+            sizeEl.classList.add("text-danger", "fw-semibold");
+            sizeEl.textContent += " — Vượt quá giới hạn 5 MB!";
+        } else {
+            sizeEl.classList.remove("text-danger", "fw-semibold");
+        }
+    });
+
+    // Vô hiệu hóa nút submit sau khi click để tránh double-submit
+    const form = document.getElementById("apply-form");
+    if (form && submitBtn) {
+        form.addEventListener("submit", function () {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Đang nộp…';
+        });
+    }
+})();
+</script>
+{% endblock %}

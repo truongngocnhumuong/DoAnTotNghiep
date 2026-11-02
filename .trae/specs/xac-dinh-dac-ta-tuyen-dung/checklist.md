@@ -11,10 +11,10 @@
 - [x] Django Admin `/admin/` dùng được khi phát triển, cùng ràng buộc email/`role`; không bắt buộc trong checklist demo nộp
 - [x] HR tạo, sửa, đóng tin tuyển dụng được
 - [x] Candidate xem danh sách việc làm và chi tiết JD được
-- [ ] Candidate nộp CV PDF hoặc DOCX hợp lệ, tối đa 5 MB được
-- [ ] Hệ thống chặn tệp sai phần mở rộng, nội dung không phải PDF/DOCX thật, vượt 5 MB, tệp lỗi và nộp trùng; chấp nhận `application/octet-stream` khi đã xác minh nội dung
-- [ ] Nộp hồ sơ tạo lịch sử `APPLIED` với `changed_by` là Candidate
-- [ ] View tải CV yêu cầu đăng nhập và đúng quyền; Candidate không tải CV người khác
+- [x] Candidate nộp CV PDF hoặc DOCX hợp lệ, tối đa 5 MB được
+- [x] Hệ thống chặn tệp sai phần mở rộng, nội dung không phải PDF/DOCX thật, vượt 5 MB, tệp lỗi và nộp trùng; chấp nhận `application/octet-stream` khi đã xác minh nội dung
+- [x] Nộp hồ sơ tạo lịch sử `APPLIED` với `changed_by` là Candidate
+- [x] View tải CV yêu cầu đăng nhập và đúng quyền; Candidate không tải CV người khác
 - [ ] Hệ thống trích xuất được văn bản từ CV PDF bằng `pdfminer.six` (không dùng `PyPDF2`)
 - [ ] Hệ thống trích xuất được văn bản từ CV DOCX
 - [ ] Hệ thống tiền xử lý văn bản CV và JD trước khi chấm điểm; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`, không gán điểm 0
@@ -28,7 +28,7 @@
 - [ ] Khôi phục hồ sơ từ chối nhầm là thao tác riêng có xác nhận và có bản ghi lịch sử
 - [ ] Mỗi lần đổi trạng thái đều sinh bản ghi `ApplicationStatusHistory` với đúng user thực hiện
 - [ ] HR thêm và xem ghi chú phỏng vấn được
-- [ ] Candidate chỉ xem được hồ sơ của chính mình khi gọi URL trực tiếp
+- [x] Candidate chỉ xem được hồ sơ của chính mình khi gọi URL trực tiếp
 - [ ] Dashboard hiển thị đúng các số liệu tổng quan và biểu đồ cơ bản bằng Chart.js; chỉ số tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% có ghi chú ý nghĩa
 - [ ] Hệ thống xử lý đúng các lỗi quyền truy cập, lỗi JD, lỗi tệp CV và lỗi chấm điểm quan trọng
 - [ ] Hệ thống chạy được trên máy tính cá nhân với Python, Django và SQLite

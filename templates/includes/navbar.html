@@ -17,7 +17,7 @@
                             <a class="nav-link" href="{% url 'jobs:job-list' %}">Việc làm</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'applications:application-list' %}">Hồ sơ của tôi</a>
+                            <a class="nav-link" href="{% url 'applications:my-applications' %}">Hồ sơ của tôi</a>
                         </li>
                     {% endif %}
                     {% if user.role == user.Role.HR or user.role == user.Role.ADMIN %}

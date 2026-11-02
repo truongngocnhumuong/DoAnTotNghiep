@@ -26,12 +26,12 @@
   - [x] SubTask 4.3: Kiểm tra điều kiện tin mở tuyển và hạn nộp
   - [x] SubTask 4.4: Khi `title`/`description`/`requirements` đổi, gọi tính lại điểm và thứ hạng của tin đó
 
-- [ ] Task 5: Xây dựng chức năng nộp hồ sơ ứng tuyển và quản lý hồ sơ cơ bản.
-  - [ ] SubTask 5.1: Tạo form upload CV cho Candidate
-  - [ ] SubTask 5.2: Kiểm tra phần mở rộng, nội dung thực tế (magic/cấu trúc PDF hoặc DOCX), dung lượng tối đa 5 MB; chấp nhận `application/octet-stream` khi nội dung hợp lệ; chặn nộp trùng
-  - [ ] SubTask 5.3: Lưu `Application` trạng thái `APPLIED`, `scoring_status=PENDING`, lịch sử với `changed_by` là Candidate
-  - [ ] SubTask 5.4: Tạo màn hình Candidate theo dõi hồ sơ đã nộp, lọc theo `request.user`
-  - [ ] SubTask 5.5: View tải CV có kiểm tra đăng nhập và quyền; không phục vụ CV qua URL media công khai
+- [x] Task 5: Xây dựng chức năng nộp hồ sơ ứng tuyển và quản lý hồ sơ cơ bản.
+  - [x] SubTask 5.1: Tạo form upload CV cho Candidate
+  - [x] SubTask 5.2: Kiểm tra phần mở rộng, nội dung thực tế (magic/cấu trúc PDF hoặc DOCX), dung lượng tối đa 5 MB; chấp nhận `application/octet-stream` khi nội dung hợp lệ; chặn nộp trùng
+  - [x] SubTask 5.3: Lưu `Application` trạng thái `APPLIED`, `scoring_status=PENDING`, lịch sử với `changed_by` là Candidate
+  - [x] SubTask 5.4: Tạo màn hình Candidate theo dõi hồ sơ đã nộp, lọc theo `request.user`
+  - [x] SubTask 5.5: View tải CV có kiểm tra đăng nhập và quyền; không phục vụ CV qua URL media công khai
 
 - [ ] Task 6: Xây dựng pipeline xử lý CV và chấm điểm CV-JD.
   - [ ] SubTask 6.1: Tạo service trích xuất văn bản từ PDF chỉ bằng `pdfminer.six`; không thêm `PyPDF2`

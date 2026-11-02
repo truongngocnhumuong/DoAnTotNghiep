@@ -1,29 +1,205 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Hồ sơ {{ application.job_post.title }} — Hệ thống tuyển dụng{% endblock %}
+{% block title %}Chi tiết hồ sơ — {{ application.job_post.title }}{% endblock %}
 
 {% block content %}
 <nav aria-label="Đường dẫn" class="mb-3">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'applications:application-list' %}">Hồ sơ ứng tuyển</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ application.job_post.title }}</li>
+        {% if request.user.role == "CANDIDATE" %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'applications:my-applications' %}">Hồ sơ của tôi</a>
+            </li>
+        {% else %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'applications:application-list' %}">Tất cả hồ sơ</a>
+            </li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {{ application.job_post.title }}
+        </li>
     </ol>
 </nav>
 
-<article class="card shadow-sm">
-    <div class="card-body">
-        <h1 class="h4 mb-3">{{ application.job_post.title }}</h1>
-        <p><strong>Ứng viên:</strong> {{ application.candidate.full_name }}</p>
-        <p><strong>Trạng thái hồ sơ:</strong> {{ application.get_current_status_display }}</p>
-        <p><strong>Trạng thái chấm điểm:</strong> {{ application.get_scoring_status_display }}</p>
-        {% if application.scoring_status == "SCORED" %}
-            <p><strong>Điểm phù hợp:</strong> {{ application.similarity_score }}</p>
-            <p><strong>Thứ hạng:</strong> {{ application.ranking_position }}</p>
-        {% else %}
-            <p class="text-muted">Hồ sơ chưa có điểm chấm thành công.</p>
-        {% endif %}
-        <p><strong>Ngày nộp:</strong> {{ application.applied_at|date:"d/m/Y H:i" }}</p>
-        <p><strong>Tệp CV:</strong> {{ application.cv_original_name }}</p>
+<div class="row g-4">
+
+    {# ════════════ CỘT TRÁI ════════════ #}
+    <div class="col-lg-8">
+
+        {# Thông tin hồ sơ #}
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-file-person me-2 text-primary"></i>Thông tin hồ sơ
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Vị trí ứng tuyển</dt>
+                    <dd class="col-sm-8">
+                        <a href="{% url 'jobs:job-detail' application.job_post.pk %}">
+                            {{ application.job_post.title }}
+                        </a>
+                    </dd>
+
+                    {% if request.user.role != "CANDIDATE" %}
+                    <dt class="col-sm-4 text-muted">Ứng viên</dt>
+                    <dd class="col-sm-8">{{ application.candidate.full_name }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Email</dt>
+                    <dd class="col-sm-8">{{ application.candidate.email }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-4 text-muted">Ngày nộp</dt>
+                    <dd class="col-sm-8">{{ application.applied_at|date:"d/m/Y H:i" }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Trạng thái hồ sơ</dt>
+                    <dd class="col-sm-8">
+                        {% if application.current_status == "APPLIED" %}
+                            <span class="badge bg-secondary">Đã nộp</span>
+                        {% elif application.current_status == "REVIEWING" %}
+                            <span class="badge bg-info text-dark">Đang xét</span>
+                        {% elif application.current_status == "INTERVIEW" %}
+                            <span class="badge bg-primary">Phỏng vấn</span>
+                        {% elif application.current_status == "OFFERED" %}
+                            <span class="badge bg-success">Đề nghị nhận việc</span>
+                        {% elif application.current_status == "REJECTED" %}
+                            <span class="badge bg-danger">Từ chối</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Tệp CV</dt>
+                    <dd class="col-sm-8">
+                        <i class="bi bi-file-earmark-text me-1 text-primary"></i>
+                        {{ application.cv_original_name }}
+                        <a href="{% url 'applications:cv-download' application.pk %}"
+                           class="btn btn-sm btn-outline-primary ms-2">
+                            <i class="bi bi-download me-1"></i>Tải về
+                        </a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        {# Lịch sử trạng thái #}
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-clock-history me-2 text-secondary"></i>Lịch sử trạng thái
+            </div>
+            <div class="card-body p-0">
+                {% if status_history %}
+                <ul class="list-group list-group-flush">
+                    {% for history in status_history %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                {% if history.from_status %}
+                                    <span class="badge bg-light text-dark border">
+                                        {{ history.get_from_status_display }}
+                                    </span>
+                                    <i class="bi bi-arrow-right mx-1 text-muted"></i>
+                                {% endif %}
+                                <span class="badge
+                                    {% if history.to_status == 'APPLIED' %}bg-secondary
+                                    {% elif history.to_status == 'REVIEWING' %}bg-info text-dark
+                                    {% elif history.to_status == 'INTERVIEW' %}bg-primary
+                                    {% elif history.to_status == 'OFFERED' %}bg-success
+                                    {% elif history.to_status == 'REJECTED' %}bg-danger
+                                    {% else %}bg-light text-dark{% endif %}">
+                                    {{ history.get_to_status_display }}
+                                </span>
+                                <span class="text-muted small ms-2">
+                                    bởi {{ history.changed_by.full_name }}
+                                </span>
+                                {% if history.note %}
+                                <div class="text-muted small mt-1 ms-1">
+                                    <i class="bi bi-chat-left-text me-1"></i>{{ history.note }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <span class="text-muted small text-nowrap">
+                                {{ history.changed_at|date:"d/m/Y H:i" }}
+                            </span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted p-3 mb-0">Chưa có lịch sử trạng thái.</p>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
-</article>
+
+    {# ════════════ CỘT PHẢI ════════════ #}
+    <div class="col-lg-4">
+
+        {# Điểm chấm #}
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-star me-2 text-warning"></i>Kết quả chấm điểm
+            </div>
+            <div class="card-body text-center">
+                {% if application.scoring_status == "SCORED" and application.similarity_score is not None %}
+                    <div class="display-5 fw-bold text-success mb-1">
+                        {{ application.similarity_score|floatformat:3 }}
+                    </div>
+                    <div class="text-muted small mb-2">Điểm phù hợp CV - JD</div>
+                    {% if application.ranking_position %}
+                    <div class="badge bg-primary">
+                        Xếp hạng #{{ application.ranking_position }}
+                    </div>
+                    {% endif %}
+
+                {% elif application.scoring_status == "PENDING" %}
+                    <i class="bi bi-hourglass-split display-6 text-muted d-block mb-2"></i>
+                    <p class="text-muted mb-0 small">Đang chờ hệ thống chấm điểm…</p>
+
+                {% elif application.scoring_status == "EXTRACTION_FAILED" %}
+                    <i class="bi bi-exclamation-circle display-6 text-danger d-block mb-2"></i>
+                    <p class="text-danger mb-0 small">Lỗi trích xuất nội dung CV.</p>
+
+                {% elif application.scoring_status == "INSUFFICIENT_TEXT" %}
+                    <i class="bi bi-exclamation-triangle display-6 text-warning d-block mb-2"></i>
+                    <p class="text-warning mb-0 small">Nội dung CV quá ngắn để chấm điểm.</p>
+
+                {% elif application.scoring_status == "SCORING_FAILED" %}
+                    <i class="bi bi-x-circle display-6 text-danger d-block mb-2"></i>
+                    <p class="text-danger mb-0 small">Lỗi trong quá trình chấm điểm.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Thông tin tin tuyển dụng #}
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-briefcase me-2 text-primary"></i>Thông tin tuyển dụng
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if application.job_post.department %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Phòng ban</span>
+                    <span class="small">{{ application.job_post.department }}</span>
+                </li>
+                {% endif %}
+                {% if application.job_post.location %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Địa điểm</span>
+                    <span class="small">{{ application.job_post.location }}</span>
+                </li>
+                {% endif %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Hạn nộp</span>
+                    <span class="small">{{ application.job_post.deadline|date:"d/m/Y" }}</span>
+                </li>
+                <li class="list-group-item">
+                    <a href="{% url 'jobs:job-detail' application.job_post.pk %}"
+                       class="btn btn-sm btn-outline-secondary w-100">
+                        <i class="bi bi-eye me-1"></i>Xem tin tuyển dụng
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
 {% endblock %}
