@@ -33,14 +33,14 @@
   - [x] SubTask 5.4: Tạo màn hình Candidate theo dõi hồ sơ đã nộp, lọc theo `request.user`
   - [x] SubTask 5.5: View tải CV có kiểm tra đăng nhập và quyền; không phục vụ CV qua URL media công khai
 
-- [ ] Task 6: Xây dựng pipeline xử lý CV và chấm điểm CV-JD.
-  - [ ] SubTask 6.1: Tạo service trích xuất văn bản từ PDF chỉ bằng `pdfminer.six`; không thêm `PyPDF2`
-  - [ ] SubTask 6.2: Tạo service trích xuất văn bản từ DOCX bằng `python-docx`
-  - [ ] SubTask 6.3: Tạo bước tiền xử lý văn bản CV và JD
-  - [ ] SubTask 6.4: Fit một `TfidfVectorizer` trên corpus JD + các CV hợp lệ cùng `JobPost`, rồi tính Cosine Similarity
-  - [ ] SubTask 6.5: Lưu `cv_text`, `scoring_status`, `similarity_score`, `ranking_position`; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`; không gán điểm 0 khi lỗi hoặc văn bản rỗng
-  - [ ] SubTask 6.6: Tính lại toàn bộ điểm và thứ hạng của tin khi có CV mới hoặc JD đổi
-  - [ ] SubTask 6.7: Hiển thị điểm, thứ hạng và trạng thái chấm trên danh sách hồ sơ
+- [x] Task 6: Xây dựng pipeline xử lý CV và chấm điểm CV-JD.
+  - [x] SubTask 6.1: Tạo service trích xuất văn bản từ PDF chỉ bằng `pdfminer.six`; không thêm `PyPDF2`
+  - [x] SubTask 6.2: Tạo service trích xuất văn bản từ DOCX bằng `python-docx`
+  - [x] SubTask 6.3: Tạo bước tiền xử lý văn bản CV và JD
+  - [x] SubTask 6.4: Fit một `TfidfVectorizer` trên corpus JD + các CV hợp lệ cùng `JobPost`, rồi tính Cosine Similarity
+  - [x] SubTask 6.5: Lưu `cv_text`, `scoring_status`, `similarity_score`, `ranking_position`; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`; không gán điểm 0 khi lỗi hoặc văn bản rỗng
+  - [x] SubTask 6.6: Tính lại toàn bộ điểm và thứ hạng của tin khi có CV mới hoặc JD đổi
+  - [x] SubTask 6.7: Hiển thị điểm, thứ hạng và trạng thái chấm trên danh sách hồ sơ
 
 - [ ] Task 7: Xây dựng Kanban, lịch sử trạng thái và ghi chú phỏng vấn.
   - [ ] SubTask 7.1: Tạo giao diện Kanban bằng `SortableJS`

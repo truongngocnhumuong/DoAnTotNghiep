@@ -15,14 +15,14 @@
 - [x] Hệ thống chặn tệp sai phần mở rộng, nội dung không phải PDF/DOCX thật, vượt 5 MB, tệp lỗi và nộp trùng; chấp nhận `application/octet-stream` khi đã xác minh nội dung
 - [x] Nộp hồ sơ tạo lịch sử `APPLIED` với `changed_by` là Candidate
 - [x] View tải CV yêu cầu đăng nhập và đúng quyền; Candidate không tải CV người khác
-- [ ] Hệ thống trích xuất được văn bản từ CV PDF bằng `pdfminer.six` (không dùng `PyPDF2`)
-- [ ] Hệ thống trích xuất được văn bản từ CV DOCX
-- [ ] Hệ thống tiền xử lý văn bản CV và JD trước khi chấm điểm; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`, không gán điểm 0
-- [ ] Cùng một `JobPost` dùng một corpus TF-IDF (JD + các CV hợp lệ) rồi mới tính Cosine Similarity
-- [ ] Hồ sơ không đọc được hoặc văn bản rỗng không bị gán `similarity_score = 0`
-- [ ] Hệ thống tính lại điểm và thứ hạng khi có CV mới hoặc khi nội dung JD đổi
-- [ ] Hệ thống lưu `cv_text`, `scoring_status`, `similarity_score` và `ranking_position` đúng
-- [ ] HR xem được danh sách ứng viên, điểm phù hợp, thứ hạng và trạng thái chấm lỗi
+- [x] Hệ thống trích xuất được văn bản từ CV PDF bằng `pdfminer.six` (không dùng `PyPDF2`)
+- [x] Hệ thống trích xuất được văn bản từ CV DOCX
+- [x] Hệ thống tiền xử lý văn bản CV và JD trước khi chấm điểm; dưới 100 ký tự sau chuẩn hóa thì `INSUFFICIENT_TEXT`, không gán điểm 0
+- [x] Cùng một `JobPost` dùng một corpus TF-IDF (JD + các CV hợp lệ) rồi mới tính Cosine Similarity
+- [x] Hồ sơ không đọc được hoặc văn bản rỗng không bị gán `similarity_score = 0`
+- [x] Hệ thống tính lại điểm và thứ hạng khi có CV mới hoặc khi nội dung JD đổi
+- [x] Hệ thống lưu `cv_text`, `scoring_status`, `similarity_score` và `ranking_position` đúng
+- [x] HR xem được danh sách ứng viên, điểm phù hợp, thứ hạng và trạng thái chấm lỗi
 - [ ] Kanban dùng 5 trạng thái `APPLIED`, `REVIEWING`, `INTERVIEW`, `OFFERED`, `REJECTED` và chỉ nhận chuyển hợp lệ phía máy chủ
 - [ ] Kéo `REJECTED` sang `INTERVIEW` (hoặc cột khác) bằng thao tác thường bị từ chối
 - [ ] Khôi phục hồ sơ từ chối nhầm là thao tác riêng có xác nhận và có bản ghi lịch sử
