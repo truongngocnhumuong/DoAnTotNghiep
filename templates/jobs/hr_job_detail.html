@@ -30,8 +30,11 @@
             </span>
         </div>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'jobs:hr-job-update' job.pk %}" class="btn btn-outline-primary">
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'applications:kanban' job.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-kanban me-1"></i>Kanban
+        </a>
+        <a href="{% url 'jobs:hr-job-update' job.pk %}" class="btn btn-outline-secondary">
             <i class="bi bi-pencil me-1"></i>Chỉnh sửa
         </a>
         {# Nút đóng tin nhanh #}

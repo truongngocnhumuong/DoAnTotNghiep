@@ -23,11 +23,11 @@
 - [x] Hệ thống tính lại điểm và thứ hạng khi có CV mới hoặc khi nội dung JD đổi
 - [x] Hệ thống lưu `cv_text`, `scoring_status`, `similarity_score` và `ranking_position` đúng
 - [x] HR xem được danh sách ứng viên, điểm phù hợp, thứ hạng và trạng thái chấm lỗi
-- [ ] Kanban dùng 5 trạng thái `APPLIED`, `REVIEWING`, `INTERVIEW`, `OFFERED`, `REJECTED` và chỉ nhận chuyển hợp lệ phía máy chủ
-- [ ] Kéo `REJECTED` sang `INTERVIEW` (hoặc cột khác) bằng thao tác thường bị từ chối
-- [ ] Khôi phục hồ sơ từ chối nhầm là thao tác riêng có xác nhận và có bản ghi lịch sử
-- [ ] Mỗi lần đổi trạng thái đều sinh bản ghi `ApplicationStatusHistory` với đúng user thực hiện
-- [ ] HR thêm và xem ghi chú phỏng vấn được
+- [x] Kanban dùng 5 trạng thái `APPLIED`, `REVIEWING`, `INTERVIEW`, `OFFERED`, `REJECTED` và chỉ nhận chuyển hợp lệ phía máy chủ
+- [x] Kéo `REJECTED` sang `INTERVIEW` (hoặc cột khác) bằng thao tác thường bị từ chối
+- [x] Khôi phục hồ sơ từ chối nhầm là thao tác riêng có xác nhận và có bản ghi lịch sử
+- [x] Mỗi lần đổi trạng thái đều sinh bản ghi `ApplicationStatusHistory` với đúng user thực hiện
+- [x] HR thêm và xem ghi chú phỏng vấn được
 - [x] Candidate chỉ xem được hồ sơ của chính mình khi gọi URL trực tiếp
 - [ ] Dashboard hiển thị đúng các số liệu tổng quan và biểu đồ cơ bản bằng Chart.js; chỉ số tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% có ghi chú ý nghĩa
 - [ ] Hệ thống xử lý đúng các lỗi quyền truy cập, lỗi JD, lỗi tệp CV và lỗi chấm điểm quan trọng

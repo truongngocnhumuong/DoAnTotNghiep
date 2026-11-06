@@ -42,12 +42,12 @@
   - [x] SubTask 6.6: Tính lại toàn bộ điểm và thứ hạng của tin khi có CV mới hoặc JD đổi
   - [x] SubTask 6.7: Hiển thị điểm, thứ hạng và trạng thái chấm trên danh sách hồ sơ
 
-- [ ] Task 7: Xây dựng Kanban, lịch sử trạng thái và ghi chú phỏng vấn.
-  - [ ] SubTask 7.1: Tạo giao diện Kanban bằng `SortableJS`
-  - [ ] SubTask 7.2: Cập nhật `current_status` khi kéo thả qua view máy chủ; chỉ nhận cạnh hợp lệ; no-op nếu cùng trạng thái; từ chối kéo `REJECTED` sang trạng thái khác
-  - [ ] SubTask 7.3: Lưu `ApplicationStatusHistory` với `changed_by` là HR/Admin đang đăng nhập cho mọi lần đổi trạng thái
-  - [ ] SubTask 7.4: Tạo thao tác khôi phục hồ sơ `REJECTED` riêng, có xác nhận, ghi lịch sử, không dùng kéo thả
-  - [ ] SubTask 7.5: Tạo chức năng thêm và xem `InterviewNote`
+- [x] Task 7: Xây dựng Kanban, lịch sử trạng thái và ghi chú phỏng vấn.
+  - [x] SubTask 7.1: Tạo giao diện Kanban bằng `SortableJS`
+  - [x] SubTask 7.2: Cập nhật `current_status` khi kéo thả qua view máy chủ; chỉ nhận cạnh hợp lệ; no-op nếu cùng trạng thái; từ chối kéo `REJECTED` sang trạng thái khác
+  - [x] SubTask 7.3: Lưu `ApplicationStatusHistory` với `changed_by` là HR/Admin đang đăng nhập cho mọi lần đổi trạng thái
+  - [x] SubTask 7.4: Tạo thao tác khôi phục hồ sơ `REJECTED` riêng, có xác nhận, ghi lịch sử, không dùng kéo thả
+  - [x] SubTask 7.5: Tạo chức năng thêm và xem `InterviewNote`
 
 - [ ] Task 8: Xây dựng dashboard tuyển dụng.
   - [ ] SubTask 8.1: Tạo truy vấn tổng hợp số liệu; điểm trung bình chỉ lấy hồ sơ `SCORED` nếu có; tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% kèm chú thích ý nghĩa

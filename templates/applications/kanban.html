@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Kanban — {{ job.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.kanban-board  { display: flex; gap: 1rem; overflow-x: auto; align-items: flex-start; min-height: 70vh; padding-bottom: 1rem; }
+.kanban-col    { min-width: 230px; width: 230px; flex-shrink: 0; }
+.kanban-list   { min-height: 80px; border-radius: 0 0 .375rem .375rem; }
+.kanban-card   { cursor: grab; user-select: none; transition: box-shadow .15s; }
+.kanban-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.15) !important; }
+.kanban-card:active { cursor: grabbing; }
+.kanban-card.sortable-ghost   { opacity: .35; }
+.kanban-card.sortable-chosen  { box-shadow: 0 6px 16px rgba(0,0,0,.25) !important; }
+</style>
+{% endblock %}
+
+{% block container_class %}container-fluid{% endblock %}
+
+{% block content %}
+<nav aria-label="Đường dẫn" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'jobs:hr-job-list' %}">Tin tuyển dụng</a></li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'jobs:hr-job-detail' job.pk %}">{{ job.title }}</a>
+        </li>
+        <li class="breadcrumb-item active">Kanban</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h1 class="h4 mb-0">
+            <i class="bi bi-kanban me-2 text-primary"></i>Bảng Kanban — {{ job.title }}
+        </h1>
+        <small class="text-muted">
+            Tổng {{ total }} hồ sơ · Kéo thả để chuyển trạng thái
+            · <span class="text-danger">Cột "Từ chối" không cho kéo ra</span>
+        </small>
+    </div>
+    <a href="{% url 'jobs:hr-job-detail' job.pk %}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại tin
+    </a>
+</div>
+
+{# Toast container #}
+<div class="position-fixed top-0 end-0 p-3" style="z-index:9999" id="toast-container"></div>
+
+{# Bảng Kanban #}
+<div class="kanban-board" id="kanban-board">
+
+    {% for col in kanban_column_list %}
+    <div class="kanban-col">
+        <div class="card border-0 shadow-sm h-100">
+            {# Header #}
+            <div class="card-header d-flex justify-content-between align-items-center py-2
+                bg-{{ col.color }}
+                {% if col.color == 'info' or col.color == 'warning' %}text-dark{% else %}text-white{% endif %}">
+                <span class="fw-semibold small">{{ col.label }}</span>
+                <span class="badge bg-white text-dark rounded-pill" id="count-{{ col.status }}">
+                    {{ col.apps|length }}
+                </span>
+            </div>
+
+            {# Danh sách thẻ #}
+            <div class="card-body p-2 kanban-list"
+                 data-status="{{ col.status }}"
+                 id="list-{{ col.status }}">
+
+                {% for app in col.apps %}
+                <div class="card kanban-card mb-2 border-0 shadow-sm"
+                     data-app-id="{{ app.pk }}"
+                     data-status="{{ col.status }}">
+                    <div class="card-body p-2">
+                        {# Ứng viên #}
+                        <div class="fw-semibold small text-truncate mb-1" title="{{ app.candidate.full_name }}">
+                            {{ app.candidate.full_name }}
+                        </div>
+
+                        {# Điểm phù hợp #}
+                        {% if app.scoring_status == "SCORED" and app.similarity_score is not None %}
+                            <div class="small text-success mb-1">
+                                <i class="bi bi-star-fill me-1"></i>{{ app.similarity_score|floatformat:3 }}
+                                {% if app.ranking_position %}
+                                    <span class="badge bg-primary ms-1">#{{ app.ranking_position }}</span>
+                                {% endif %}
+                            </div>
+                        {% elif app.scoring_status == "PENDING" %}
+                            <div class="small text-muted mb-1">
+                                <i class="bi bi-hourglass-split me-1"></i>Chờ chấm
+                            </div>
+                        {% elif app.scoring_status == "EXTRACTION_FAILED" %}
+                            <div class="small text-danger mb-1">
+                                <i class="bi bi-exclamation-circle me-1"></i>Lỗi đọc CV
+                            </div>
+                        {% elif app.scoring_status == "INSUFFICIENT_TEXT" %}
+                            <div class="small text-warning mb-1">
+                                <i class="bi bi-exclamation-triangle me-1"></i>CV quá ngắn
+                            </div>
+                        {% endif %}
+
+                        {# Ngày nộp + link chi tiết #}
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <small class="text-muted">{{ app.applied_at|date:"d/m" }}</small>
+                            <a href="{% url 'applications:application-detail' app.pk %}"
+                               class="btn btn-link btn-sm p-0 text-primary"
+                               title="Xem chi tiết"
+                               onclick="event.stopPropagation(); event.preventDefault(); window.open(this.href,'_blank');">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+
+                        {# Nút khôi phục — chỉ cột REJECTED #}
+                        {% if col.status == "REJECTED" %}
+                        <div class="mt-2">
+                            <a href="{% url 'applications:restore-rejected' app.pk %}"
+                               class="btn btn-sm btn-outline-warning w-100 py-0 small">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Khôi phục
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-muted small text-center py-4 empty-placeholder" id="empty-{{ col.status }}">
+                    <i class="bi bi-inbox d-block mb-1 fs-5"></i>Trống
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>{# /kanban-board #}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    var UPDATE_URL  = "{% url 'applications:update-status' %}";
+    var CSRF_TOKEN  = "{{ csrf_token }}";
+
+    // ── Toast ───────────────────────────────────────────────────────────
+    function showToast(msg, type) {
+        var container = document.getElementById("toast-container");
+        var id = "toast-" + Date.now();
+        container.insertAdjacentHTML("beforeend",
+            '<div id="' + id + '" class="toast align-items-center text-bg-' + type + ' border-0 show mb-2" role="alert" aria-live="assertive">' +
+            '<div class="d-flex"><div class="toast-body">' + msg + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+            '</div></div>');
+        setTimeout(function () {
+            var el = document.getElementById(id);
+            if (el) el.remove();
+        }, 4500);
+    }
+
+    // ── Cập nhật badge đếm ──────────────────────────────────────────────
+    function updateCount(status) {
+        var list  = document.getElementById("list-" + status);
+        var badge = document.getElementById("count-" + status);
+        if (!list || !badge) return;
+        badge.textContent = list.querySelectorAll(".kanban-card").length;
+    }
+
+    // ── Placeholder helper ──────────────────────────────────────────────
+    function ensurePlaceholder(list, status) {
+        if (!list.querySelector(".kanban-card")) {
+            list.insertAdjacentHTML("beforeend",
+                '<div class="text-muted small text-center py-4 empty-placeholder" id="empty-' + status + '">' +
+                '<i class="bi bi-inbox d-block mb-1 fs-5"></i>Trống</div>');
+        }
+    }
+    function removePlaceholder(list) {
+        var ph = list.querySelector(".empty-placeholder");
+        if (ph) ph.remove();
+    }
+
+    // ── Khởi tạo Sortable ───────────────────────────────────────────────
+    document.querySelectorAll(".kanban-list").forEach(function (list) {
+        var colStatus  = list.dataset.status;
+        var isRejected = colStatus === "REJECTED";
+
+        var sortable = Sortable.create(list, {
+            group: {
+                name: "kanban",
+                pull: isRejected ? false : true,   // REJECTED: không cho kéo ra
+                put: true,
+            },
+            animation: 150,
+            ghostClass:  "sortable-ghost",
+            chosenClass: "sortable-chosen",
+            filter: ".btn, a, .empty-placeholder",  // không trigger khi click vào nút/link
+
+            onEnd: function (evt) {
+                var card      = evt.item;
+                var toList    = evt.to;
+                var fromList  = evt.from;
+                var newStatus = toList.dataset.status;
+                var oldStatus = fromList.dataset.status;
+                var appId     = parseInt(card.dataset.appId);
+
+                if (newStatus === oldStatus) return;  // no-op
+
+                fetch(UPDATE_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": CSRF_TOKEN,
+                    },
+                    body: JSON.stringify({ application_id: appId, new_status: newStatus }),
+                })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.ok) {
+                        card.dataset.status = newStatus;
+                        removePlaceholder(toList);
+                        ensurePlaceholder(fromList, oldStatus);
+                        updateCount(oldStatus);
+                        updateCount(newStatus);
+                        showToast("Đã chuyển sang <strong>" + data.new_status_display + "</strong>", "success");
+                    } else {
+                        // Rollback
+                        fromList.insertBefore(card, fromList.children[evt.oldIndex] || null);
+                        showToast(data.error || "Không thể chuyển trạng thái.", "danger");
+                    }
+                })
+                .catch(function () {
+                    fromList.insertBefore(card, fromList.children[evt.oldIndex] || null);
+                    showToast("Lỗi kết nối. Vui lòng thử lại.", "danger");
+                });
+            },
+        });
+    });
+})();
+</script>
+{% endblock %}
