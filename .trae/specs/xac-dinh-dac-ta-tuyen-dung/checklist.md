@@ -29,6 +29,6 @@
 - [x] Mỗi lần đổi trạng thái đều sinh bản ghi `ApplicationStatusHistory` với đúng user thực hiện
 - [x] HR thêm và xem ghi chú phỏng vấn được
 - [x] Candidate chỉ xem được hồ sơ của chính mình khi gọi URL trực tiếp
-- [ ] Dashboard hiển thị đúng các số liệu tổng quan và biểu đồ cơ bản bằng Chart.js; chỉ số tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% có ghi chú ý nghĩa
+- [x] Dashboard hiển thị đúng các số liệu tổng quan và biểu đồ cơ bản bằng Chart.js; chỉ số tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% có ghi chú ý nghĩa
 - [ ] Hệ thống xử lý đúng các lỗi quyền truy cập, lỗi JD, lỗi tệp CV và lỗi chấm điểm quan trọng
 - [ ] Hệ thống chạy được trên máy tính cá nhân với Python, Django và SQLite

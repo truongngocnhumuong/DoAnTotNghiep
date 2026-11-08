@@ -49,10 +49,10 @@
   - [x] SubTask 7.4: Tạo thao tác khôi phục hồ sơ `REJECTED` riêng, có xác nhận, ghi lịch sử, không dùng kéo thả
   - [x] SubTask 7.5: Tạo chức năng thêm và xem `InterviewNote`
 
-- [ ] Task 8: Xây dựng dashboard tuyển dụng.
-  - [ ] SubTask 8.1: Tạo truy vấn tổng hợp số liệu; điểm trung bình chỉ lấy hồ sơ `SCORED` nếu có; tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% kèm chú thích ý nghĩa
-  - [ ] SubTask 8.2: Hiển thị thẻ thống kê tổng quan
-  - [ ] SubTask 8.3: Hiển thị biểu đồ bằng `Chart.js`
+- [x] Task 8: Xây dựng dashboard tuyển dụng.
+  - [x] SubTask 8.1: Tạo truy vấn tổng hợp số liệu; điểm trung bình chỉ lấy hồ sơ `SCORED` nếu có; tỷ lệ OFFERED = (số OFFERED / tổng hồ sơ) × 100% kèm chú thích ý nghĩa
+  - [x] SubTask 8.2: Hiển thị thẻ thống kê tổng quan
+  - [x] SubTask 8.3: Hiển thị biểu đồ bằng `Chart.js`
 
 - [ ] Task 9: Xử lý lỗi, phân quyền biên và thông báo người dùng.
   - [ ] SubTask 9.1: Xử lý lỗi đăng nhập, truy cập trái quyền, tài khoản bị khóa, tải CV trái phép, email trùng sau chuẩn hóa và chuyển Kanban không hợp lệ
