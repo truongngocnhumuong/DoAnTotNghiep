@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Không tìm thấy trang — Hệ thống tuyển dụng{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+    <div class="mb-4">
+        <i class="bi bi-search display-1 text-muted opacity-50"></i>
+    </div>
+    <h1 class="h2 fw-bold mb-2">404 — Không tìm thấy trang</h1>
+    <p class="text-muted mb-4" style="max-width:420px">
+        Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.
+        Vui lòng kiểm tra lại đường dẫn hoặc quay về trang chủ.
+    </p>
+    <div class="d-flex gap-2 flex-wrap justify-content-center">
+        <a href="{% url 'jobs:home' %}" class="btn btn-primary">
+            <i class="bi bi-house me-1"></i>Về trang chủ
+        </a>
+        <a href="{% url 'jobs:job-list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-briefcase me-1"></i>Xem việc làm
+        </a>
+    </div>
+</div>
+{% endblock %}

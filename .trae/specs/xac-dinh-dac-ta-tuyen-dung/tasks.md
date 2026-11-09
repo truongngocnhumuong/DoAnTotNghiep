@@ -54,10 +54,10 @@
   - [x] SubTask 8.2: Hiển thị thẻ thống kê tổng quan
   - [x] SubTask 8.3: Hiển thị biểu đồ bằng `Chart.js`
 
-- [ ] Task 9: Xử lý lỗi, phân quyền biên và thông báo người dùng.
-  - [ ] SubTask 9.1: Xử lý lỗi đăng nhập, truy cập trái quyền, tài khoản bị khóa, tải CV trái phép, email trùng sau chuẩn hóa và chuyển Kanban không hợp lệ
-  - [ ] SubTask 9.2: Xử lý lỗi tệp CV, lỗi trích xuất và lỗi chấm điểm (không biến lỗi thành điểm 0)
-  - [ ] SubTask 9.3: Chuẩn hóa thông báo lỗi và thông báo thành công trên giao diện
+- [x] Task 9: Xử lý lỗi, phân quyền biên và thông báo người dùng.
+  - [x] SubTask 9.1: Xử lý lỗi đăng nhập, truy cập trái quyền, tài khoản bị khóa, tải CV trái phép, email trùng sau chuẩn hóa và chuyển Kanban không hợp lệ
+  - [x] SubTask 9.2: Xử lý lỗi tệp CV, lỗi trích xuất và lỗi chấm điểm (không biến lỗi thành điểm 0)
+  - [x] SubTask 9.3: Chuẩn hóa thông báo lỗi và thông báo thành công trên giao diện
 
 - [ ] Task 10: Kiểm thử và hoàn thiện bản demo đồ án.
   - [ ] SubTask 10.1: Viết test cho model, phân quyền object-level, corpus TF-IDF dùng chung và lịch sử `changed_by`

@@ -9,6 +9,8 @@ admin.site.site_title = "Tuyển dụng"
 admin.site.index_title = "Bảng điều khiển phát triển"
 
 handler403 = "django.views.defaults.permission_denied"
+handler404 = "django.views.defaults.page_not_found"
+handler500 = "django.views.defaults.server_error"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
