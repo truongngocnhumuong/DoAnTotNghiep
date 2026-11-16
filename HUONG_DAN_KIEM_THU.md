@@ -48,13 +48,12 @@ python manage.py runserver
 
 | # | Thao tác | URL | Kết quả mong đợi |
 |---|----------|-----|------------------|
-| A1 | Vào trang quản lý tài khoản | `/accounts/users/` | Danh sách tất cả user, lọc theo vai trò |
-| A2 | Tạo tài khoản HR mới | `/accounts/users/create/` | Form nhập email, họ tên, vai trò HR; sau tạo redirect về danh sách |
-| A3 | Xem chi tiết tài khoản | `/accounts/users/<id>/` | Thấy thông tin đầy đủ của user |
-| A4 | Khóa tài khoản | `/accounts/users/<id>/` → nút "Khóa tài khoản" | Tài khoản bị khóa, không thể đăng nhập |
-| A5 | Mở khóa tài khoản | `/accounts/users/<id>/` → nút "Mở khóa" | Tài khoản hoạt động lại |
-| A6 | Thử tạo user trùng email | `/accounts/users/create/` | Hiển thị lỗi "Email đã được sử dụng" |
-| A7 | Truy cập Django Admin | `/admin/` | Panel admin Django đầy đủ |
+| A1 | Vào trang quản lý tài khoản | `/accounts/nguoi-dung/` | Danh sách tất cả người dùng, trạng thái và nút thao tác |
+| A2 | Xem chi tiết tài khoản | `/accounts/nguoi-dung/<id>/` | Thấy thông tin đầy đủ: tên đăng nhập, email, vai trò, ngày tạo... |
+| A3 | Khóa tài khoản | Nhấn nút "Khóa" ở danh sách hoặc chi tiết | Tài khoản bị khóa (`is_active=False`), không thể đăng nhập |
+| A4 | Mở khóa tài khoản | Nhấn nút "Mở khóa" ở danh sách hoặc chi tiết | Tài khoản hoạt động lại bình thường |
+| A5 | Thử tự khóa chính mình | Nhấn nút khóa ở tài khoản Admin đang login | Báo lỗi, hệ thống chặn không cho tự khóa |
+| A6 | Truy cập Django Admin | `/admin/` | Panel admin Django đầy đủ (dành cho quản trị phát triển) |
 
 ### 3.2 Kiểm tra phân quyền
 

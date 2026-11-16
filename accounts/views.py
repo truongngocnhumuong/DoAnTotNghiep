@@ -1,13 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
+from django.views import View
+from django.views.generic import DetailView, FormView, ListView
 
 from accounts.forms import (
-    AdminUserCreateForm,
-    AdminUserUpdateForm,
     CandidateRegistrationForm,
     RoleBasedAuthenticationForm,
 )
@@ -58,7 +57,7 @@ class UserListView(AdminRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        queryset = User.objects.all()
+        queryset = User.objects.all().order_by("-date_joined")
         query = self.request.GET.get("q", "").strip()
         if query:
             queryset = queryset.filter(
@@ -74,29 +73,26 @@ class UserListView(AdminRequiredMixin, ListView):
         return context
 
 
-class UserCreateView(AdminRequiredMixin, CreateView):
-    model = User
-    form_class = AdminUserCreateForm
-    template_name = "accounts/user_form.html"
-    success_url = reverse_lazy("accounts:user-list")
-
-    def form_valid(self, form):
-        messages.success(self.request, "Đã tạo tài khoản thành công.")
-        return super().form_valid(form)
-
-
-class UserUpdateView(AdminRequiredMixin, UpdateView):
-    model = User
-    form_class = AdminUserUpdateForm
-    template_name = "accounts/user_form.html"
-    success_url = reverse_lazy("accounts:user-list")
-
-    def form_valid(self, form):
-        messages.success(self.request, "Đã cập nhật tài khoản thành công.")
-        return super().form_valid(form)
-
-
 class UserDetailView(AdminRequiredMixin, DetailView):
     model = User
     template_name = "accounts/user_detail.html"
     context_object_name = "account"
+
+
+class UserToggleActiveView(AdminRequiredMixin, View):
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        if user.pk == request.user.pk:
+            messages.error(request, "Bạn không thể tự khóa tài khoản của chính mình.")
+        else:
+            user.is_active = not user.is_active
+            user.save(update_fields=["is_active"])
+            if user.is_active:
+                messages.success(request, f"Đã mở khóa tài khoản {user.username}.")
+            else:
+                messages.warning(request, f"Đã khóa tài khoản {user.username}.")
+
+        next_url = request.POST.get("next")
+        if next_url:
+            return redirect(next_url)
+        return redirect("accounts:user-list")

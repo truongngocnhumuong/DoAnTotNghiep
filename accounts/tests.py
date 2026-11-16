@@ -182,46 +182,25 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(self.client.get(reverse("accounts:user-list")).status_code, 403)
         self.assertEqual(self.client.get(reverse("dashboard:index")).status_code, 200)
 
-    def test_admin_can_create_hr_with_normalized_unique_email(self):
-        User.objects.create_user(
+    def test_admin_can_view_user_detail(self):
+        admin = User.objects.create_user(
             username="admin2",
             email="admin2@mail.com",
             password="MatKhauManh123",
             full_name="Admin Hai",
             role=User.Role.ADMIN,
         )
+        target = User.objects.create_user(
+            username="candidate_view",
+            email="view@mail.com",
+            password="MatKhauManh123",
+            full_name="Candidate View",
+            role=User.Role.CANDIDATE,
+        )
         self.client.login(username="admin2", password="MatKhauManh123")
-        response = self.client.post(
-            reverse("accounts:user-create"),
-            {
-                "username": "hrtao",
-                "email": "  HR.Tao@Mail.COM ",
-                "full_name": "HR Tao",
-                "role": User.Role.HR,
-                "password": "MatKhauManh123",
-                "confirm_password": "MatKhauManh123",
-                "is_active": "on",
-            },
-        )
-        self.assertRedirects(response, reverse("accounts:user-list"))
-        hr_user = User.objects.get(username="hrtao")
-        self.assertEqual(hr_user.role, User.Role.HR)
-        self.assertEqual(hr_user.email, "hr.tao@mail.com")
-
-        duplicate = self.client.post(
-            reverse("accounts:user-create"),
-            {
-                "username": "hrtao2",
-                "email": "hr.tao@mail.com",
-                "full_name": "HR Tao 2",
-                "role": User.Role.HR,
-                "password": "MatKhauManh123",
-                "confirm_password": "MatKhauManh123",
-                "is_active": "on",
-            },
-        )
-        self.assertEqual(duplicate.status_code, 200)
-        self.assertEqual(User.objects.filter(username="hrtao2").count(), 0)
+        response = self.client.get(reverse("accounts:user-detail", args=[target.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Candidate View")
 
     def test_django_admin_creation_form_requires_role_and_unique_email(self):
         User.objects.create_user(
@@ -258,8 +237,8 @@ class AuthenticationFlowTests(TestCase):
         self.assertRedirects(response, reverse("jobs:home"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
-    def test_admin_can_lock_account(self):
-        User.objects.create_user(
+    def test_admin_can_lock_and_unlock_account(self):
+        admin = User.objects.create_user(
             username="adminlock",
             email="adminlock@mail.com",
             password="MatKhauManh123",
@@ -274,15 +253,20 @@ class AuthenticationFlowTests(TestCase):
             role=User.Role.HR,
         )
         self.client.login(username="adminlock", password="MatKhauManh123")
-        response = self.client.post(
-            reverse("accounts:user-update", args=[target.pk]),
-            {
-                "username": target.username,
-                "email": target.email,
-                "full_name": target.full_name,
-                "role": target.role,
-            },
-        )
+        
+        # Test khóa tài khoản
+        response = self.client.post(reverse("accounts:user-toggle-active", args=[target.pk]))
         self.assertRedirects(response, reverse("accounts:user-list"))
         target.refresh_from_db()
         self.assertFalse(target.is_active)
+
+        # Test mở khóa lại tài khoản
+        response2 = self.client.post(reverse("accounts:user-toggle-active", args=[target.pk]))
+        self.assertRedirects(response2, reverse("accounts:user-list"))
+        target.refresh_from_db()
+        self.assertTrue(target.is_active)
+
+        # Test Admin không thể tự khóa chính mình
+        self.client.post(reverse("accounts:user-toggle-active", args=[admin.pk]))
+        admin.refresh_from_db()
+        self.assertTrue(admin.is_active)
