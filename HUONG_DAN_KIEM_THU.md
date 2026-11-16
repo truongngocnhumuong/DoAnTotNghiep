@@ -114,8 +114,9 @@ python manage.py runserver
 
 | # | Thao tác | URL | Kết quả mong đợi |
 |---|----------|-----|------------------|
-| C1 | Truy cập trang đăng ký | `/accounts/register/` | Form đăng ký (không có lựa chọn Admin/HR) |
-| C2 | Đăng ký với email hợp lệ | Điền form đầy đủ | Thông báo thành công, redirect về đăng nhập |
+| C1 | Truy cập trang đăng ký | `/accounts/register/` | Form đăng ký có lựa chọn Vai trò: **Ứng viên** hoặc **Nhân sự (HR)** |
+| C2 | Đăng ký tài khoản Ứng viên | Chọn vai trò "Ứng viên", điền đầy đủ | Thông báo thành công, đăng nhập vào có menu Ứng viên (Việc làm, Hồ sơ) |
+| C2b | Đăng ký tài khoản Nhân sự | Chọn vai trò "Nhân sự / Tuyển dụng", điền đầy đủ | Thông báo thành công, đăng nhập vào có menu Nhân sự (Tin tuyển dụng, Kanban, Thống kê) |
 | C3 | Đăng ký email trùng | Dùng email đã có | Thông báo lỗi "Email đã được sử dụng" |
 
 ### 5.2 Duyệt tin tuyển dụng

@@ -80,6 +80,26 @@ class AuthenticationFlowTests(TestCase):
         self.assertTrue(user.is_active)
         self.assertTrue(check_password("MatKhauManh123", user.password))
 
+    def test_register_creates_hr_then_redirects_to_login(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "username": "hrmoi",
+                "email": "  HR.New@Mail.COM ",
+                "full_name": "HR Moi",
+                "password": "MatKhauManh123",
+                "confirm_password": "MatKhauManh123",
+                "role": User.Role.HR,
+            },
+        )
+        self.assertRedirects(response, reverse("accounts:login"))
+        self.assertNotIn("_auth_user_id", self.client.session)
+        user = User.objects.get(username="hrmoi")
+        self.assertEqual(user.role, User.Role.HR)
+        self.assertEqual(user.email, "hr.new@mail.com")
+        self.assertTrue(user.is_active)
+        self.assertTrue(check_password("MatKhauManh123", user.password))
+
     def test_login_redirects_by_role(self):
         User.objects.create_user(
             username="admin1",

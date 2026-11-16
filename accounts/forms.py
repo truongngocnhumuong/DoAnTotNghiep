@@ -7,11 +7,19 @@ from accounts.utils import validate_unique_normalized_email
 
 
 def bootstrap_widget(widget):
-    widget.attrs.setdefault("class", "form-control")
+    if isinstance(widget, forms.Select):
+        widget.attrs.setdefault("class", "form-select")
+    else:
+        widget.attrs.setdefault("class", "form-control")
     return widget
 
 
 class CandidateRegistrationForm(forms.Form):
+    ROLE_CHOICES = (
+        (User.Role.CANDIDATE, "Ứng viên (Tìm việc & nộp hồ sơ)"),
+        (User.Role.HR, "Nhân sự / Tuyển dụng (Đăng tin & tuyển người)"),
+    )
+
     username = forms.CharField(
         label="Tên đăng nhập",
         max_length=150,
@@ -19,6 +27,12 @@ class CandidateRegistrationForm(forms.Form):
     )
     email = forms.EmailField(label="Email", max_length=254)
     full_name = forms.CharField(label="Họ và tên", max_length=150)
+    role = forms.CharField(
+        label="Vai trò",
+        required=False,
+        widget=forms.Select(choices=ROLE_CHOICES),
+        initial=User.Role.CANDIDATE,
+    )
     password = forms.CharField(label="Mật khẩu", widget=forms.PasswordInput)
     confirm_password = forms.CharField(label="Xác nhận mật khẩu", widget=forms.PasswordInput)
 
@@ -42,6 +56,12 @@ class CandidateRegistrationForm(forms.Form):
             raise forms.ValidationError("Họ tên là bắt buộc.")
         return full_name
 
+    def clean_role(self):
+        role = self.cleaned_data.get("role")
+        if role not in {User.Role.CANDIDATE, User.Role.HR}:
+            return User.Role.CANDIDATE
+        return role
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
@@ -61,12 +81,15 @@ class CandidateRegistrationForm(forms.Form):
         return cleaned_data
 
     def save(self):
+        role = self.cleaned_data.get("role") or User.Role.CANDIDATE
+        if role not in {User.Role.CANDIDATE, User.Role.HR}:
+            role = User.Role.CANDIDATE
         return User.objects.create_user(
             username=self.cleaned_data["username"],
             email=self.cleaned_data["email"],
             password=self.cleaned_data["password"],
             full_name=self.cleaned_data["full_name"],
-            role=User.Role.CANDIDATE,
+            role=role,
             is_active=True,
         )
 
