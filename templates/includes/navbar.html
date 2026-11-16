@@ -1,16 +1,13 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-brand">
     <div class="container">
         <a class="navbar-brand fw-semibold" href="{% url 'jobs:home' %}">
-            <i class="bi bi-briefcase-fill me-1"></i>Tuyển dụng
+            <i class="bi bi-house-door-fill me-1"></i>Trang chủ
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Mở menu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'jobs:home' %}">Trang chủ</a>
-                </li>
                 {% if user.is_authenticated %}
                     {% if user.role == user.Role.CANDIDATE %}
                         <li class="nav-item">

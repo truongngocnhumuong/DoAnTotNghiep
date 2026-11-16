@@ -59,10 +59,10 @@
   - [x] SubTask 9.2: Xử lý lỗi tệp CV, lỗi trích xuất và lỗi chấm điểm (không biến lỗi thành điểm 0)
   - [x] SubTask 9.3: Chuẩn hóa thông báo lỗi và thông báo thành công trên giao diện
 
-- [ ] Task 10: Kiểm thử và hoàn thiện bản demo đồ án.
-  - [ ] SubTask 10.1: Viết test cho model, phân quyền object-level, corpus TF-IDF dùng chung và lịch sử `changed_by`
-  - [ ] SubTask 10.2: Kiểm thử thủ công theo vai trò Admin, HR, Candidate
-  - [ ] SubTask 10.3: Tạo dữ liệu mẫu phục vụ demo và chụp minh chứng cho báo cáo
+- [x] Task 10: Kiểm thử và hoàn thiện bản demo đồ án.
+  - [x] SubTask 10.1: Viết test cho model, phân quyền object-level, corpus TF-IDF dùng chung và lịch sử `changed_by`
+  - [x] SubTask 10.2: Kiểm thử thủ công theo vai trò Admin, HR, Candidate
+  - [x] SubTask 10.3: Tạo dữ liệu mẫu phục vụ demo và chụp minh chứng cho báo cáo
 
 # Task Dependencies
 - Task 2 depends on Task 1
