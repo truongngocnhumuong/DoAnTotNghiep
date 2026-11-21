@@ -207,6 +207,10 @@ class ApplicationDetailView(ApplicationQuerysetMixin, DetailView):
             User.Role.HR, User.Role.ADMIN
         }
         context["VALID_TRANSITIONS"] = VALID_TRANSITIONS
+        # Ghi chú công khai — Candidate nhìn thấy được
+        context["public_notes"] = app.interview_notes.filter(
+            is_visible_to_candidate=True
+        ).select_related("created_by").order_by("-created_at")
         return context
 
 
@@ -401,10 +405,17 @@ class AddInterviewNoteView(StaffRequiredMixin, View):
         title = request.POST.get("title", "").strip()
         content = request.POST.get("content", "").strip()
         interview_round = request.POST.get("interview_round", "").strip()
+        feedback_result = request.POST.get("feedback_result", "").strip() or None
+        is_visible = request.POST.get("is_visible_to_candidate") == "on"
 
         if not title or not content:
             messages.error(request, "Tiêu đề và nội dung ghi chú không được để trống.")
             return redirect("applications:application-detail", pk=pk)
+
+        # Validate feedback_result nếu có
+        valid_results = {c[0] for c in InterviewNote.FeedbackResult.choices}
+        if feedback_result and feedback_result not in valid_results:
+            feedback_result = None
 
         InterviewNote.objects.create(
             application=app,
@@ -412,6 +423,8 @@ class AddInterviewNoteView(StaffRequiredMixin, View):
             title=title,
             content=content,
             interview_round=interview_round or None,
+            feedback_result=feedback_result,
+            is_visible_to_candidate=is_visible,
         )
         messages.success(request, "Đã thêm ghi chú phỏng vấn thành công.")
         return redirect("applications:application-detail", pk=pk)

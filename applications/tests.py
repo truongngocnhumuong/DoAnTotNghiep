@@ -167,6 +167,52 @@ class ApplicationModelTests(TestCase):
             models.PROTECT,
         )
 
+    def test_interview_note_feedback_visible_to_candidate(self):
+        """Ghi chú có is_visible_to_candidate=True xuất hiện trong context của Candidate."""
+        application = self._application()
+        InterviewNote.objects.create(
+            application=application,
+            created_by=self.hr,
+            title="Phan hoi cong khai",
+            content="Phù hợp với vị trí",
+            feedback_result=InterviewNote.FeedbackResult.SUITABLE,
+            is_visible_to_candidate=True,
+        )
+        InterviewNote.objects.create(
+            application=application,
+            created_by=self.hr,
+            title="Ghi chu noi bo",
+            content="Chi HR moi thay",
+            is_visible_to_candidate=False,
+        )
+        self.client.login(username="uv2", password="MatKhauManh123",
+                          SERVER_NAME="localhost")
+        url = reverse("applications:application-detail", args=[application.pk])
+        response = self.client.get(url, SERVER_NAME="localhost")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("public_notes", response.context)
+        public_notes = response.context["public_notes"]
+        self.assertEqual(public_notes.count(), 1)
+        self.assertEqual(public_notes.first().title, "Phan hoi cong khai")
+
+    def test_interview_note_private_not_in_public_notes(self):
+        """Ghi chú is_visible_to_candidate=False không xuất hiện trong public_notes."""
+        application = self._application()
+        InterviewNote.objects.create(
+            application=application,
+            created_by=self.hr,
+            title="Ghi chu noi bo",
+            content="Chi HR moi thay",
+            is_visible_to_candidate=False,
+        )
+        self.client.login(username="uv2", password="MatKhauManh123",
+                          SERVER_NAME="localhost")
+        url = reverse("applications:application-detail", args=[application.pk])
+        response = self.client.get(url, SERVER_NAME="localhost")
+        self.assertEqual(response.status_code, 200)
+        public_notes = response.context["public_notes"]
+        self.assertEqual(public_notes.count(), 0)
+
 
 class ApplicationObjectPermissionTests(TestCase):
     def setUp(self):

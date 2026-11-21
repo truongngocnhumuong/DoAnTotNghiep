@@ -264,6 +264,8 @@ class Command(BaseCommand):
                         "va REST API. Can kiem tra them ve ky nang DevOps. "
                         "De xuat moi phong van vong 2."
                     ),
+                    "feedback_result": "CONSIDERING",
+                    "is_visible_to_candidate": True,
                 },
             )
             self.stdout.write("    [OK] Them ghi chu phong van mau")

@@ -176,6 +176,11 @@ class ApplicationStatusHistory(models.Model):
 
 
 class InterviewNote(models.Model):
+    class FeedbackResult(models.TextChoices):
+        SUITABLE = "SUITABLE", "Phù hợp"
+        NOT_SUITABLE = "NOT_SUITABLE", "Không phù hợp"
+        CONSIDERING = "CONSIDERING", "Đang xem xét"
+
     application = models.ForeignKey(
         Application,
         on_delete=models.CASCADE,
@@ -189,6 +194,17 @@ class InterviewNote(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     interview_round = models.CharField(max_length=50, blank=True, null=True)
+    feedback_result = models.CharField(
+        max_length=20,
+        choices=FeedbackResult.choices,
+        blank=True,
+        null=True,
+        verbose_name="Kết quả đánh giá",
+    )
+    is_visible_to_candidate = models.BooleanField(
+        default=False,
+        verbose_name="Hiển thị cho ứng viên",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
